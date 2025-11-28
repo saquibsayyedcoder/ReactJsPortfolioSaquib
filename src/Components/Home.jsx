@@ -173,20 +173,20 @@ export default function Home() {
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Link to="/resume" className="group">
-                <button className="px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium rounded-xl shadow-lg hover:from-purple-700 hover:to-indigo-700 transform hover:-translate-y-1 transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-purple-300/50 flex items-center gap-2">
-                  View My Resume
-                  <FaArrowRight className="group-hover:translate-x-1 transition-transform duration-300" />
-                </button>
-              </Link>
-              
-              <a href="#projects" className="group">
-                <button className="px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white font-medium rounded-xl hover:bg-white/20 transform hover:-translate-y-1 transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-white/30">
-                  See My Work
-                </button>
-              </a>
-            </div>
+          <div className="flex flex-col xs:flex-row gap-3 sm:gap-4 justify-center lg:justify-start w-full max-w-md lg:max-w-none">
+  <Link to="/resume" className="group w-full xs:w-auto">
+    <button className="w-full xs:w-auto px-4 py-3 sm:px-6 sm:py-4 lg:px-8 lg:py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium rounded-xl sm:rounded-2xl text-sm sm:text-base lg:text-lg shadow-lg hover:from-purple-700 hover:to-indigo-700 transform hover:-translate-y-1 active:translate-y-0 transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-purple-300/50 flex items-center justify-center gap-2">
+      View My Resume
+      <FaArrowRight className="group-hover:translate-x-1 transition-transform duration-300 text-xs sm:text-sm lg:text-base" />
+    </button>
+  </Link>
+  
+  <a href="#projects" className="group w-full xs:w-auto">
+    <button className="w-full xs:w-auto px-4 py-3 sm:px-6 sm:py-4 lg:px-8 lg:py-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white font-medium rounded-xl sm:rounded-2xl text-sm sm:text-base lg:text-lg hover:bg-white/20 transform hover:-translate-y-1 active:translate-y-0 transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-white/30 flex items-center justify-center">
+      See My Work
+    </button>
+  </a>
+</div>
 
             {/* Social Links */}
             <div className="pt-4">
