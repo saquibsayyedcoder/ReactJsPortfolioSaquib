@@ -61,3 +61,44 @@ html[data-theme="dark"] .text-base-content {
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
   border-radius: 6px;
 }
+
+/* 3D Flip Card Styles */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Swiper Custom Styles */
+.swiper-pagination-bullet {
+  width: 12px;
+  height: 12px;
+  background: rgba(147, 51, 234, 0.5);
+  opacity: 0.5;
+}
+
+.swiper-pagination-bullet-active {
+  background: rgb(147, 51, 234);
+  opacity: 1;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  position: relative;
+  margin-top: 0;
+}
+
+/* Dark mode adjustments */
+.dark .swiper-pagination-bullet {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.dark .swiper-pagination-bullet-active {
+  background: rgb(255, 255, 255);
+}

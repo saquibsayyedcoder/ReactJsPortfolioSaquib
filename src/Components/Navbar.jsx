@@ -9,178 +9,214 @@ import {
   FiSun,
   FiMoon,
   FiX,
+  FiGithub,
+  FiLinkedin,
+  FiDownload
 } from "react-icons/fi";
-import { FaReact } from "react-icons/fa";
+import { useTheme } from "../hooks/useTheme";
 
 const navItems = [
   { id: 1, text: "Home", path: "#home", icon: <FiHome /> },
   { id: 2, text: "About", path: "#about", icon: <FiUser /> },
-  { id: 3, text: "My Skills", path: "#skills", icon: <FiCode /> },
-  { id: 4, text: "My Projects", path: "#projects", icon: <FiBriefcase /> },
+  { id: 3, text: "Skills", path: "#skills", icon: <FiCode /> },
+  { id: 4, text: "Projects", path: "#projects", icon: <FiBriefcase /> },
   { id: 5, text: "Contact", path: "#contact", icon: <FiMail /> },
 ];
 
-const THEME_KEY = "site-theme";
+const socialLinks = [
+  { icon: <FiGithub />, href: "https://github.com/saquibsayyedcoder", label: "GitHub" },
+  { icon: <FiLinkedin />, href: "https://linkedin.com/in/saquib-arif-sayyed", label: "LinkedIn" },
+];
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [theme, setTheme] = useState(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
+  const { isDarkMode, toggleTheme } = useTheme();
 
-  // Initialize theme
-  useEffect(() => {
-    const saved = localStorage.getItem(THEME_KEY);
-    if (saved === "dark" || saved === "light") {
-      applyTheme(saved, false);
-      return;
-    }
-    const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
-    applyTheme(prefersDark ? "dark" : "light", false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  function applyTheme(t, persist = true) {
-    setTheme(t);
-    document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
-    if (persist) localStorage.setItem(THEME_KEY, t);
-  }
-
-  function toggleTheme() {
-    applyTheme(theme === "dark" ? "light" : "dark", true);
-  }
-
-  // ✅ ENHANCED SCROLL — WORKS EVERY TIME
-  const scrollToSection = (e, path) => {
-    e.preventDefault();
-    const id = path.replace("#", "");
-    setMenuOpen(false); // Close mobile menu
-
-    let element = document.getElementById(id);
-
-    // Retry if element not found immediately (hydration delay)
-    if (!element) {
-      setTimeout(() => {
-        element = document.getElementById(id);
-        if (element) {
-          const offset = 80;
-          const elementTop = element.getBoundingClientRect().top + window.scrollY;
-          const scrollTop = elementTop - offset;
-          window.scrollTo({ top: scrollTop, behavior: "smooth" });
-        }
-      }, 100);
-      return;
-    }
-
-    // Scroll immediately if found
-    const offset = 80;
-    const elementTop = element.getBoundingClientRect().top + window.scrollY;
-    const scrollTop = elementTop - offset;
-
-    window.scrollTo({
-      top: scrollTop,
-      behavior: "smooth",
-    });
-  };
-
-  // Close mobile menu on scroll
+  // Scroll effects
   useEffect(() => {
     const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
       if (menuOpen) setMenuOpen(false);
+      
+      // Update active section
+      const sections = navItems.map(item => item.path.replace('#', ''));
+      const current = sections.find(section => {
+        const element = document.getElementById(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          return rect.top <= 100 && rect.bottom >= 100;
+        }
+        return false;
+      });
+      if (current) setActiveSection(current);
     };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [menuOpen]);
 
-  // ✅ Auto-scroll on initial load or hash change
-  useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash;
-      if (hash) {
-        const element = document.getElementById(hash.replace("#", ""));
-        if (element) {
-          const offset = 80;
-          const elementTop = element.getBoundingClientRect().top + window.scrollY;
-          const scrollTop = elementTop - offset;
-          // Small delay to ensure render
-          setTimeout(() => {
-            window.scrollTo({ top: scrollTop, behavior: "smooth" });
-          }, 100);
-        }
-      }
-    };
+  const scrollToSection = (e, path) => {
+    e.preventDefault();
+    const id = path.replace("#", "");
+    setMenuOpen(false);
 
-    // Run on mount
-    handleHashChange();
-
-    // Listen for manual hash changes
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
-
-  if (theme === null) {
-    return <div className="h-16" />;
-  }
+    const element = document.getElementById(id);
+    if (element) {
+      const offset = 80;
+      const elementTop = element.getBoundingClientRect().top + window.scrollY;
+      const scrollTop = elementTop - offset;
+      window.scrollTo({ top: scrollTop, behavior: "smooth" });
+    }
+  };
 
   return (
     <>
-      {/* Desktop Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 shadow-md bg-base-100/90 backdrop-blur-sm">
-        <div className="navbar max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 h-16">
-          {/* Logo */}
-          <div className="flex-1">
-            <div className="flex items-center gap-3">
-              <img
-                src="/img4.jpg"
-                alt="Profile"
-                className="h-10 w-10 rounded-full object-cover border-2 border-primary"
-              />
-              <a
-                href="#home"
-                onClick={(e) => scrollToSection(e, "#home")}
-                className="flex items-center gap-1 group"
-              >
-                <span className="text-lg md:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
-                  SAQUIB<span className="text-primary">.</span>
-                </span>
-                <p className="hidden md:inline-block text-sm text-base-content/70 ml-2 group-hover:text-primary transition-colors">
-                  Frontend Developer | MERN PERN Stack | Software Engineer
+      {/* Modern Navbar */}
+      <nav className={`
+        fixed top-0 left-0 right-0 z-50 transition-all duration-500
+        ${scrolled 
+          ? isDarkMode 
+            ? 'bg-slate-900/95 backdrop-blur-xl shadow-2xl shadow-black/20 border-b border-slate-800' 
+            : 'bg-white/95 backdrop-blur-xl shadow-2xl shadow-gray-200/50 border-b border-gray-100'
+          : isDarkMode
+            ? 'bg-transparent'
+            : 'bg-transparent'
+        }
+      `}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            {/* Logo */}
+            <div className="flex items-center gap-4">
+              <div className={`
+                relative group cursor-pointer
+                ${isDarkMode ? 'hover:bg-slate-800' : 'hover:bg-gray-100'}
+              `}>
+                <div className={`
+                  w-12 h-12 rounded-2xl border-2 transition-all duration-500
+                  ${isDarkMode 
+                    ? 'border-purple-500/50 bg-gradient-to-br from-purple-500/20 to-pink-500/20' 
+                    : 'border-purple-400 bg-gradient-to-br from-purple-100 to-pink-100'
+                  }
+                  group-hover:scale-110 group-hover:rotate-3
+                `}>
+                  <img
+                    src="/img4.jpg"
+                    alt="Saquib"
+                    className="w-full h-full rounded-2xl object-cover"
+                  />
+                </div>
+                <div className={`
+                  absolute -inset-1 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 
+                  opacity-0 group-hover:opacity-20 blur transition-opacity duration-500
+                `} />
+              </div>
+              
+              <div className="flex flex-col">
+                <a
+                  href="#home"
+                  onClick={(e) => scrollToSection(e, "#home")}
+                  className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all duration-300"
+                >
+                  SAQUIB
+                </a>
+                <p className={`
+                  text-sm transition-colors duration-300
+                  ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}
+                  ${scrolled ? 'opacity-100' : 'opacity-0'}
+                `}>
+                  Full Stack Developer
                 </p>
-              </a>
+              </div>
             </div>
-          </div>
 
-          {/* Desktop Nav */}
-          <div className="hidden md:flex md:flex-none items-center space-x-1">
-            <ul className="menu menu-horizontal p-0 gap-1">
-              {navItems.map((it) => (
-                <li key={it.id}>
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center space-x-1">
+              <div className={`
+                flex items-center space-x-1 px-4 py-2 rounded-2xl transition-all duration-500
+                ${isDarkMode 
+                  ? 'bg-slate-800/50 border border-slate-700/50' 
+                  : 'bg-gray-100/80 border border-gray-200/50'
+                }
+              `}>
+                {navItems.map((item) => (
                   <a
-                    href={it.path}
-                    onClick={(e) => scrollToSection(e, it.path)}
-                    className="px-3 py-2 text-sm md:text-base font-medium rounded-lg transition-all duration-300 hover:bg-primary/10 hover:text-primary"
+                    key={item.id}
+                    href={item.path}
+                    onClick={(e) => scrollToSection(e, item.path)}
+                    className={`
+                      relative px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300
+                      ${activeSection === item.path.replace('#', '')
+                        ? isDarkMode
+                          ? 'text-white bg-gradient-to-r from-purple-500/20 to-pink-500/20'
+                          : 'text-gray-900 bg-gradient-to-r from-purple-100 to-pink-100'
+                        : isDarkMode
+                          ? 'text-gray-400 hover:text-white hover:bg-slate-700/50'
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/50'
+                      }
+                    `}
                   >
-                    {it.text}
+                    {item.text}
+                    {activeSection === item.path.replace('#', '') && (
+                      <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full" />
+                    )}
                   </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+                ))}
+              </div>
+            </div>
 
-          {/* Right Icons */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={toggleTheme}
-              aria-label="Toggle theme"
-              className="btn btn-ghost btn-circle tooltip tooltip-bottom"
-              data-tip={theme === "dark" ? "Switch to Light" : "Switch to Dark"}
-            >
-              {theme === "dark" ? <FiSun className="text-xl" /> : <FiMoon className="text-xl" />}
-            </button>
+            {/* Right Section */}
+            <div className="flex items-center gap-3">
+              {/* Social Links */}
+              <div className="hidden md:flex items-center gap-2">
+                {socialLinks.map((social, index) => (
+                  <a
+                    key={index}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`
+                      p-2 rounded-xl transition-all duration-300 transform hover:scale-110
+                      ${isDarkMode
+                        ? 'text-gray-400 hover:text-white hover:bg-slate-800'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                      }
+                    `}
+                    aria-label={social.label}
+                  >
+                    {social.icon}
+                  </a>
+                ))}
+              </div>
 
-            {/* Mobile Menu Button */}
-            <div className="md:hidden">
+              {/* Resume Download */}
+           
+              {/* Theme Toggle */}
+              <button
+                onClick={toggleTheme}
+                aria-label="Toggle theme"
+                className={`
+                  p-3 rounded-xl transition-all duration-500 transform hover:scale-110
+                  ${isDarkMode
+                    ? 'text-yellow-400 hover:bg-slate-800 hover:text-yellow-300'
+                    : 'text-orange-500 hover:bg-gray-100 hover:text-orange-600'
+                  }
+                `}
+              >
+                {isDarkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
+              </button>
+
+              {/* Mobile Menu Button */}
               <button
                 onClick={() => setMenuOpen(true)}
-                className="btn btn-ghost btn-circle"
+                className={`
+                  lg:hidden p-3 rounded-xl transition-all duration-300
+                  ${isDarkMode
+                    ? 'text-gray-400 hover:text-white hover:bg-slate-800'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  }
+                `}
                 aria-label="Open menu"
               >
                 <FiMenu size={24} />
@@ -190,40 +226,80 @@ function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Sidebar */}
+      {/* Modern Mobile Menu */}
       <div
         className={`
-          md:hidden fixed inset-0 z-50 flex
-          transition-all duration-500 ease-in-out
-          ${menuOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}
+          lg:hidden fixed inset-0 z-50 transition-all duration-500 ease-out
+          ${menuOpen 
+            ? "opacity-100 visible" 
+            : "opacity-0 invisible pointer-events-none"
+          }
         `}
       >
-        {/* Backdrop */}
+        {/* Backdrop with blur */}
         <div
-          className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+          className={`
+            absolute inset-0 transition-all duration-500
+            ${menuOpen 
+              ? isDarkMode 
+                ? 'bg-black/60 backdrop-blur-xl' 
+                : 'bg-white/60 backdrop-blur-xl'
+              : ''
+            }
+          `}
           onClick={() => setMenuOpen(false)}
         />
 
-        {/* Slide-in Sidebar */}
-        <div className="relative ml-auto w-80 bg-base-100 shadow-2xl h-full flex flex-col">
+        {/* Slide-in Panel */}
+        <div className={`
+          relative ml-auto w-80 sm:w-96 h-full flex flex-col transition-transform duration-500
+          ${isDarkMode 
+            ? 'bg-slate-900 border-l border-slate-800' 
+            : 'bg-white border-l border-gray-200'
+          }
+          ${menuOpen ? "translate-x-0" : "translate-x-full"}
+        `}>
           {/* Header */}
-          <div className="p-6 border-b border-base-200 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <FaReact className="text-3xl text-blue-500" />
-              <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
-                SAQUIB.
-              </span>
+          <div className={`
+            p-6 border-b transition-colors duration-300
+            ${isDarkMode ? 'border-slate-800' : 'border-gray-200'}
+          `}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className={`
+                  w-10 h-10 rounded-xl border-2
+                  ${isDarkMode 
+                    ? 'border-purple-500/50 bg-gradient-to-br from-purple-500/20 to-pink-500/20' 
+                    : 'border-purple-400 bg-gradient-to-br from-purple-100 to-pink-100'
+                  }
+                `}>
+                  <img
+                    src="/img4.jpg"
+                    alt="Saquib"
+                    className="w-full h-full rounded-xl object-cover"
+                  />
+                </div>
+                <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
+                  SAQUIB
+                </span>
+              </div>
+              <button
+                onClick={() => setMenuOpen(false)}
+                className={`
+                  p-2 rounded-xl transition-all duration-300
+                  ${isDarkMode
+                    ? 'text-gray-400 hover:text-white hover:bg-slate-800'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  }
+                `}
+                aria-label="Close menu"
+              >
+                <FiX size={24} />
+              </button>
             </div>
-            <button
-              onClick={() => setMenuOpen(false)}
-              className="btn btn-ghost btn-circle hover:bg-error/10 hover:text-error"
-              aria-label="Close menu"
-            >
-              <FiX size={24} />
-            </button>
           </div>
 
-          {/* Nav Items */}
+          {/* Navigation Items */}
           <nav className="flex-1 p-6 overflow-y-auto">
             <ul className="space-y-2">
               {navItems.map((item) => (
@@ -231,12 +307,34 @@ function Navbar() {
                   <a
                     href={item.path}
                     onClick={(e) => scrollToSection(e, item.path)}
-                    className="flex items-center gap-4 p-4 rounded-xl font-medium text-base-content hover:bg-primary/10 hover:text-primary transition-all duration-300 group"
+                    className={`
+                      flex items-center gap-4 p-4 rounded-xl font-medium transition-all duration-300 group
+                      ${activeSection === item.path.replace('#', '')
+                        ? isDarkMode
+                          ? 'text-white bg-gradient-to-r from-purple-500/20 to-pink-500/20'
+                          : 'text-gray-900 bg-gradient-to-r from-purple-100 to-pink-100'
+                        : isDarkMode
+                          ? 'text-gray-400 hover:text-white hover:bg-slate-800'
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                      }
+                    `}
                   >
-                    <span className="text-xl group-hover:scale-110 transition-transform">
+                    <span className={`
+                      text-xl transition-transform duration-300
+                      ${activeSection === item.path.replace('#', '')
+                        ? 'scale-110'
+                        : 'group-hover:scale-110'
+                      }
+                    `}>
                       {item.icon}
                     </span>
-                    <span className="group-hover:translate-x-1 transition-transform">
+                    <span className={`
+                      transition-transform duration-300
+                      ${activeSection === item.path.replace('#', '')
+                        ? 'translate-x-1'
+                        : 'group-hover:translate-x-1'
+                      }
+                    `}>
                       {item.text}
                     </span>
                   </a>
@@ -245,21 +343,71 @@ function Navbar() {
             </ul>
           </nav>
 
-          {/* Footer */}
-          <div className="p-6 border-t border-base-200">
-            <button
-              onClick={toggleTheme}
-              className="btn btn-outline btn-primary w-full flex items-center justify-center gap-2"
-            >
-              {theme === "dark" ? <FiSun /> : <FiMoon />}
-              Switch to {theme === "dark" ? "Light" : "Dark"}
-            </button>
+          {/* Footer Section */}
+          <div className={`
+            p-6 border-t space-y-4
+            ${isDarkMode ? 'border-slate-800' : 'border-gray-200'}
+          `}>
+            {/* Social Links */}
+            <div className="flex justify-center gap-4">
+              {socialLinks.map((social, index) => (
+                <a
+                  key={index}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`
+                    p-3 rounded-xl transition-all duration-300 transform hover:scale-110
+                    ${isDarkMode
+                      ? 'text-gray-400 hover:text-white hover:bg-slate-800'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                    }
+                  `}
+                  aria-label={social.label}
+                >
+                  {social.icon}
+                </a>
+              ))}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-3">
+              <a
+                href="/resume.pdf"
+                download
+                className={`
+                  flex items-center justify-center gap-2 w-full py-3 rounded-xl font-medium transition-all duration-300
+                  ${isDarkMode
+                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700'
+                    : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600'
+                  }
+                  transform hover:-translate-y-0.5
+                `}
+              >
+                <FiDownload className="text-sm" />
+                Download Resume
+              </a>
+              
+              <button
+                onClick={toggleTheme}
+                className={`
+                  flex items-center justify-center gap-2 w-full py-3 rounded-xl font-medium transition-all duration-300
+                  ${isDarkMode
+                    ? 'border border-slate-700 text-gray-300 hover:bg-slate-800 hover:text-white'
+                    : 'border border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                  }
+                `}
+              >
+                {isDarkMode ? <FiSun /> : <FiMoon />}
+                Switch to {isDarkMode ? "Light" : "Dark"}
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Spacer */}
-      <div className="h-16" />
+      <div className="h-20" />
     </>
   );
 }

@@ -6,85 +6,45 @@ import {
   FaBriefcase,
   FaGraduationCap,
   FaExternalLinkAlt,
+  FaCode,
+  FaDatabase,
+  FaPalette,
+  FaServer,
+  FaTools,
 } from "react-icons/fa";
 import { DiMongodb } from "react-icons/di";
 import { RiReactjsFill } from "react-icons/ri";
-import { SiPostgresql, SiTailwindcss, SiRedux } from "react-icons/si";
+import { SiPostgresql, SiTailwindcss, SiRedux, SiPrisma, SiDocker, SiExpress } from "react-icons/si";
 import { Link } from "react-router-dom";
 
 /* Data */
 const SKILLS = [
-  { name: "React.js", level: 90, icon: <RiReactjsFill /> },
-  { name: "Redux / RTK", level: 82, icon: <SiRedux /> },
-  { name: "TanStack Query", level: 78, icon: <span>Q</span> },
-  { name: "Node.js / Express", level: 85, icon: <FaBriefcase /> },
-  { name: "MongoDB", level: 80, icon: <DiMongodb /> },
-  { name: "PostgreSQL / Prisma", level: 76, icon: <SiPostgresql /> },
-  { name: "Tailwind CSS / DaisyUI / ShadCN", level: 88, icon: <SiTailwindcss /> },
-  { name: "Linux / Git", level: 70, icon: <FaBriefcase /> },
+  { name: "React.js", level: 90, icon: <RiReactjsFill />, category: "frontend", color: "from-blue-500 to-cyan-500" },
+  { name: "Redux / RTK", level: 82, icon: <SiRedux />, category: "frontend", color: "from-purple-500 to-pink-500" },
+  { name: "TanStack Query", level: 78, icon: <FaCode />, category: "frontend", color: "from-red-500 to-orange-500" },
+  { name: "Node.js / Express", level: 85, icon: <SiExpress />, category: "backend", color: "from-green-500 to-emerald-500" },
+  { name: "MongoDB", level: 80, icon: <DiMongodb />, category: "backend", color: "from-green-400 to-teal-500" },
+  { name: "PostgreSQL / Prisma", level: 76, icon: <SiPostgresql />, category: "backend", color: "from-blue-600 to-indigo-600" },
+  { name: "Tailwind CSS / ShadCN", level: 88, icon: <SiTailwindcss />, category: "frontend", color: "from-cyan-500 to-blue-500" },
+  { name: "Linux / Git / Docker", level: 70, icon: <SiDocker />, category: "tools", color: "from-gray-600 to-gray-800" },
 ];
 
-const PROJECTS = [
-  {
-    id: 1,
-    title: "Job Portal Platform",
-    subtitle: "React + Node + PostgreSQL",
-    desc:
-      "Role-based job portal: Admin / Recruiter / Job Seeker. Resume upload, application management, shortlisting, and recruiter analytics.",
-    tech: ["React", "Tailwind", "Node", "Postgres", "Prisma", "Redux"],
-    link: "#",
-  },
-  {
-    id: 2,
-    title: "Education Management System",
-    subtitle: "MERN Stack",
-    desc:
-      "Admin-driven school management: classes, attendance, student profiles, and reports with export features and RBAC.",
-    tech: ["React", "MongoDB", "Express", "Node", "Tailwind"],
-    link: "#",
-  },
-  {
-    id: 3,
-    title: "Jewelry E-commerce",
-    subtitle: "React + Stripe",
-    desc:
-      "Mobile-first e-commerce with catalog filters, dynamic pricing, admin inventory panel, and optimized checkout flow.",
-    tech: ["React", "Tailwind", "Stripe", "Node"],
-    link: "#",
-  },
-];
-
-const EXPERIENCES = [
-  {
-    id: 1,
-    role: "Software Engineer",
-    company: "AIZTS INFOTECH PVT LTD",
-    period: "May 2024 — Present",
-    location: "Remote / Office",
-    bullets: [
-      "Built responsive, user-focused web apps for job portal, education & e-commerce domains.",
-      "Implemented clean UI using React.js, Prisma, PostgreSQL and Tailwind CSS.",
-      "Optimized frontend-backend communication and state with Redux Toolkit & TanStack Query.",
-      "Collaborated using Git, Docker, Postman; improved performance and cross-platform UX.",
-    ],
-  },
-  {
-    id: 2,
-    role: "Associate Engineer / Intern",
-    company: "AIZTS Infotech",
-    period: "Aug 25, 2024 — Present",
-    location: "Pathruth Chowk, Solapur, Maharashtra",
-    bullets: [
-      "Created modular components and improved code reuse across multiple projects.",
-      "Helped optimize DB queries and integrated RESTful APIs.",
-      "Performed tests, wrote docs, and supported onboarding of new team members.",
-    ],
-  },
+const SKILL_CATEGORIES = [
+  { id: "all", name: "All Skills", icon: <FaTools /> },
+  { id: "frontend", name: "Frontend", icon: <FaPalette /> },
+  { id: "backend", name: "Backend", icon: <FaServer /> },
+  { id: "tools", name: "Tools", icon: <FaDatabase /> },
 ];
 
 export default function About() {
   const [skillsVisible, setSkillsVisible] = useState(false);
+  const [activeCategory, setActiveCategory] = useState("all");
   const skillsRef = useRef(null);
+
+  // Filter skills based on active category
+  const filteredSkills = activeCategory === "all" 
+    ? SKILLS 
+    : SKILLS.filter(skill => skill.category === activeCategory);
 
   // Trigger animation when skills section enters viewport
   useEffect(() => {
@@ -95,7 +55,7 @@ export default function About() {
           observer.disconnect();
         }
       },
-      { threshold: 0.15 }
+      { threshold: 0.1 }
     );
 
     if (skillsRef.current) {
@@ -107,283 +67,365 @@ export default function About() {
     };
   }, []);
 
-  // Unique bar colors (Tailwind classes)
-  const barColors = [
-    "bg-blue-500",     // React.js
-    "bg-purple-500",   // Redux
-    "bg-teal-500",     // TanStack Query
-    "bg-green-500",    // Node.js
-    "bg-emerald-500",  // MongoDB
-    "bg-amber-500",    // PostgreSQL
-    "bg-cyan-500",     // Tailwind
-    "bg-gray-500",     // Linux / Git
-  ];
-
   return (
     <section
       id="about"
       name="about"
-      className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-16"
+      className="relative min-h-screen text-white py-16 bg-fixed bg-cover bg-center"
+      style={{ backgroundImage: "url('/codeimg2.jpg')" }}
     >
-      {/* Header */}
-      <header className="text-center mb-8">
-        <h1 className="text-3xl md:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
-          ABOUT ME
-        </h1>
-        <p className="mt-3 text-sm md:text-base text-base-content/70 max-w-2xl mx-auto">
-          Full-stack developer building production-ready web apps with strong UX, clean architecture, and pragmatic engineering.
-        </p>
-      </header>
+      <style>{`
+        @keyframes slideInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes progressFill {
+          from { width: 0%; }
+          to { width: var(--target-width); }
+        }
+        
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+        
+        .animate-slide-in {
+          animation: slideInUp 0.6s ease-out forwards;
+        }
+        
+        .skill-bar-fill {
+          animation: progressFill 1.5s ease-out forwards;
+          animation-delay: var(--animation-delay);
+        }
+        
+        .glow-hover:hover {
+          box-shadow: 0 0 25px rgba(139, 92, 246, 0.4);
+          transform: translateY(-5px);
+        }
+        
+        .floating {
+          animation: float 6s ease-in-out infinite;
+        }
+        
+        .glass-effect {
+          background: rgba(15, 23, 42, 0.7);
+          backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-effect-light {
+          background: rgba(15, 23, 42, 0.5);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+      `}</style>
 
-      {/* top grid: summary + contact */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <div className="md:col-span-2 space-y-4">
-          {/* Profile Card */}
-          <div className="card card-compact bg-base-100 shadow-lg p-6">
-            <div className="card-body p-0">
-              <h2 className="text-xl font-semibold mb-2">Profile</h2>
-              <p className="text-sm md:text-base text-base-content/80 leading-relaxed">
-                I'm a full-stack developer working across MERN & PERN stacks. I build maintainable applications — from pixel-perfect frontends to robust backend services. I enjoy solving complex problems and shipping production-quality software.
-              </p>
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-[1px]" />
 
-              <div className="mt-4 flex flex-wrap gap-3">
-                <Link to="/projects" className="btn btn-primary btn-sm">
-                  View Projects
-                </Link>
-                <Link to="/resume" target="_blank" rel="noreferrer" className="btn btn-outline btn-sm">
-                  View Resume
-                </Link>
+      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
+        {/* Header */}
+        <header className="text-center mb-16">
+          <div className="inline-block mb-4 floating">
+            <span className="px-4 py-2 glass-effect-light rounded-full text-sm font-medium text-purple-300 tracking-wider uppercase">
+              About Me
+            </span>
+          </div>
+          <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400 mb-4">
+            Crafting Digital Excellence
+          </h1>
+          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            Full-stack developer passionate about building production-ready applications with 
+            <span className="text-purple-300 font-semibold"> clean architecture</span>, 
+            <span className="text-purple-300 font-semibold"> exceptional UX</span>, and 
+            <span className="text-purple-300 font-semibold"> scalable solutions</span>.
+          </p>
+        </header>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+          {/* Left Column - Profile & Contact */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Profile Card */}
+            <div className="glass-effect rounded-2xl p-8 glow-hover transition-all duration-500">
+              <div className="flex items-start gap-6">
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold mb-4 flex items-center gap-3">
+                    <div className="w-2 h-8 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></div>
+                    Professional Profile
+                  </h2>
+                  <p className="text-gray-300 leading-relaxed text-lg mb-6">
+                    I'm a full-stack developer specializing in both <span className="text-purple-300 font-semibold">MERN</span> and <span className="text-purple-300 font-semibold">PERN</span> ecosystems. 
+                    I transform complex problems into elegant, maintainable solutions — from pixel-perfect frontends 
+                    to robust backend services that scale effortlessly.
+                  </p>
+                  
+                  <div className="flex flex-wrap gap-4">
+                    <Link 
+                      to="/projects" 
+                      className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl font-medium hover:from-purple-700 hover:to-indigo-700 transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-2"
+                    >
+                      View My Work
+                      <FaExternalLinkAlt className="text-sm" />
+                    </Link>
+                    <Link 
+                      to="/resume" 
+                      target="_blank" 
+                      className="px-6 py-3 glass-effect-light rounded-xl font-medium hover:bg-white/10 transform hover:-translate-y-1 transition-all duration-300"
+                    >
+                      View Resume
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Skills Card with unique colored bars */}
-          <div ref={skillsRef} className="card bg-base-100 shadow-lg p-6">
-            <div className="card-body p-0">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Core Skills</h3>
-                <div className="text-sm text-base-content/60 flex items-center gap-3">
-                  <FaGithub />
-                  <FaLinkedin />
+            {/* Skills Section */}
+            <div ref={skillsRef} className="glass-effect rounded-2xl p-8">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+                <h3 className="text-2xl font-bold flex items-center gap-3">
+                  <div className="w-2 h-8 bg-gradient-to-b from-cyan-500 to-blue-500 rounded-full"></div>
+                  Technical Expertise
+                </h3>
+                
+                {/* Skill Category Filters */}
+                <div className="flex flex-wrap gap-2">
+                  {SKILL_CATEGORIES.map(category => (
+                    <button
+                      key={category.id}
+                      onClick={() => setActiveCategory(category.id)}
+                      className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
+                        activeCategory === category.id
+                          ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
+                          : "glass-effect-light text-gray-300 hover:bg-white/10"
+                      }`}
+                    >
+                      <span className="text-xs">{category.icon}</span>
+                      {category.name}
+                    </button>
+                  ))}
                 </div>
               </div>
 
-              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                {SKILLS.map((s, idx) => (
-                  <div key={s.name} className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-sm font-medium">
-                        <span className="text-primary">{s.icon}</span>
-                        <span>{s.name}</span>
+              {/* Skills Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {filteredSkills.map((skill, idx) => (
+                  <div 
+                    key={skill.name} 
+                    className="glass-effect-light rounded-xl p-4 transition-all duration-500 hover:bg-white/10 hover:border-white/20 glow-hover"
+                    style={{ 
+                      animationDelay: `${idx * 100}ms`,
+                      animation: skillsVisible ? 'slideInUp 0.6s ease-out forwards' : 'none'
+                    }}
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg bg-gradient-to-r ${skill.color} text-white`}>
+                          {skill.icon}
+                        </div>
+                        <span className="font-semibold">{skill.name}</span>
                       </div>
-                      <div className="text-xs text-base-content/60">{s.level}%</div>
+                      <span className="text-sm font-bold text-purple-300">{skill.level}%</span>
                     </div>
-
-                    <div className="w-full h-2 bg-neutral rounded-full mt-2 overflow-hidden">
+                    
+                    <div className="w-full h-3 bg-white/10 rounded-full overflow-hidden">
                       <div
-                        className={`h-2 rounded-full ${barColors[idx % barColors.length]} transition-all duration-1000 ease-out ${
-                          skillsVisible ? "opacity-100" : "opacity-0"
-                        }`}
+                        className={`h-3 rounded-full bg-gradient-to-r ${skill.color} skill-bar-fill`}
                         style={{
-                          width: skillsVisible ? `${s.level}%` : "0%",
-                          transitionDelay: skillsVisible ? `${idx * 100}ms` : "0ms",
+                          '--target-width': `${skill.level}%`,
+                          '--animation-delay': `${idx * 150}ms`,
+                          width: skillsVisible ? `${skill.level}%` : '0%'
                         }}
-                        aria-hidden
                       />
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-4">
-                <h4 className="font-medium text-sm text-base-content/70">Technologies</h4>
-                <div className="mt-2 flex flex-wrap gap-2">
+              {/* Technologies Cloud */}
+              <div className="mt-8 pt-6 border-t border-white/10">
+                <h4 className="text-lg font-semibold mb-4 text-gray-300">Technologies I Work With</h4>
+                <div className="flex flex-wrap gap-3">
                   {[
-                    "React", "Redux Toolkit", "TanStack Query", "Node.js", "Express",
-                    "MongoDB", "Postgres", "Prisma", "Tailwind", "ShadCN UI", "Docker"
-                  ].map((t, i) => (
+                    "React", "TypeScript", "Next.js", "Redux Toolkit", "TanStack Query", 
+                    "Node.js", "Express", "MongoDB", "PostgreSQL", "Prisma", "Tailwind CSS", 
+                    "ShadCN UI", "Docker", "Git", "Linux", "REST APIs", "GraphQL"
+                  ].map((tech, i) => (
                     <span
-                      key={t}
-                      className={`px-2 py-1 rounded-full text-xs border border-base-200 hover:shadow-sm transition transform ${
-                        skillsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
-                      } hover:-translate-y-1`}
+                      key={tech}
+                      className={`px-3 py-2 rounded-lg text-sm glass-effect-light transition-all duration-300 transform hover:-translate-y-1 hover:bg-white/10 ${
+                        skillsVisible ? "opacity-100" : "opacity-0"
+                      }`}
                       style={{
-                        transitionDelay: skillsVisible ? `${i * 50}ms` : "0ms",
+                        transitionDelay: skillsVisible ? `${i * 30}ms` : "0ms",
                       }}
                     >
-                      {t}
+                      {tech}
                     </span>
                   ))}
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Right column: contact & quick facts */}
-        <aside className="space-y-4">
-          <div className="card bg-base-100 shadow-lg p-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Contact</h3>
-              <div className="text-sm text-success">Available</div>
-            </div>
-
-            <div className="mt-4 space-y-3">
-              <div className="flex items-start gap-3">
-                <FaEnvelope className="mt-1 text-base-content/70 text-rose-400" />
-                <div>
-                  <div className="text-sm font-medium">Email</div>
-                  <div className="text-xs text-base-content/60">saquibsayyed12345@gmail.com</div>
+          {/* Right Column - Contact & Quick Facts */}
+          <div className="space-y-8">
+            {/* Contact Card */}
+            <div className="glass-effect rounded-2xl p-6 glow-hover transition-all duration-500">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold">Get In Touch</h3>
+                <div className="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-xs font-medium border border-green-500/30">
+                  Available
                 </div>
               </div>
 
-              <div className="flex items-start gap-3">
-                <FaLinkedin className="mt-1 text-base-content/70 text-blue-500" />
-                <div>
-                  <div className="text-sm font-medium">LinkedIn</div>
-                  <Link
-                    className="text-xs text-primary inline-flex items-center gap-1"
-                    to="https://www.linkedin.com/in/saquib-sayyed-62b88b1a1/"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    linkedin.com/in/saquib-arif <FaExternalLinkAlt className="text-xs" />
-                  </Link>
-                </div>
-              </div>
+              <div className="space-y-4">
+                <a 
+                  href="mailto:saquibsayyed12345@gmail.com" 
+                  className="flex items-center gap-4 p-3 rounded-xl glass-effect-light hover:bg-white/10 transition-all duration-300 group"
+                >
+                  <div className="p-2 bg-rose-500/20 rounded-lg text-rose-400 group-hover:scale-110 transition-transform">
+                    <FaEnvelope />
+                  </div>
+                  <div>
+                    <div className="font-medium">Email</div>
+                    <div className="text-sm text-gray-400">saquibsayyed12345@gmail.com</div>
+                  </div>
+                </a>
 
-              <div className="flex items-start gap-3">
-                <FaGithub className="mt-1 text-base-content/70 text-gray-500" />
-                <div>
-                  <div className="text-sm font-medium">GitHub</div>
-                  <Link
-                    className="text-xs text-primary"
-                    to="https://github.com/saquibsayyedcoder"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    github.com/saquibsayyedcoder
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
+                <a 
+                  href="https://www.linkedin.com/in/saquib-sayyed-62b88b1a1/" 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="flex items-center gap-4 p-3 rounded-xl glass-effect-light hover:bg-white/10 transition-all duration-300 group"
+                >
+                  <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400 group-hover:scale-110 transition-transform">
+                    <FaLinkedin />
+                  </div>
+                  <div>
+                    <div className="font-medium">LinkedIn</div>
+                    <div className="text-sm text-gray-400 flex items-center gap-1">
+                      Connect with me <FaExternalLinkAlt className="text-xs" />
+                    </div>
+                  </div>
+                </a>
 
-          <div className="card bg-base-100 shadow-lg p-6">
-            <h3 className="text-lg font-semibold mb-2">Quick Facts</h3>
-            <ul className="text-sm text-base-content/70 space-y-2">
-              <li><strong>Experience:</strong> 1+ years (Intern → Associate Engineer → Software Engineer)</li>
-              <li><strong>Location:</strong> Solapur, Maharashtra (Open to remote)</li>
-              <li><strong>Availability:</strong> Immediate / Notice-based</li>
-            </ul>
-          </div>
-        </aside>
-      </div>
-
-      {/* Experience timeline */}
-      <div className="mb-10">
-        <h2 className="text-2xl font-semibold mb-4">Work Experience</h2>
-        <div className="space-y-6">
-          {EXPERIENCES.map((exp) => (
-            <article
-              key={exp.id}
-              className="card card-side bg-base-100 shadow-md p-6 transform transition-all duration-600 hover:-translate-y-2"
-            >
-              <div className="flex-1">
-                <div className="flex items-center gap-3">
-                  <FaBriefcase className="text-base-content/70" />
-                  <h3 className="text-lg font-semibold">{exp.role}</h3>
-                </div>
-                <div className="text-sm text-base-content/60 mt-1">{exp.company} • {exp.location}</div>
-
-                <ul className="mt-4 list-disc list-inside text-sm text-base-content/80 space-y-1">
-                  {exp.bullets.map((b, i) => (
-                    <li key={i}>{b}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="text-sm text-base-content/60 ml-4">{exp.period}</div>
-            </article>
-          ))}
-        </div>
-      </div>
-
-      {/* Projects */}
-      <div className="mb-10">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-semibold">Selected Projects</h2>
-          <div className="text-sm text-base-content/60">Open-source & production projects</div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {PROJECTS.map((p) => (
-            <div
-              key={p.id}
-              className="card bg-base-100 shadow-md p-5 flex flex-col transform transition duration-500 hover:-translate-y-2 hover:shadow-lg"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold">{p.title}</h3>
-                  <div className="text-xs text-base-content/60">{p.subtitle}</div>
-                </div>
-                <a href={p.link} className="text-primary text-sm" target="_blank" rel="noreferrer">
-                  Live <FaExternalLinkAlt className="inline ml-1 text-xs" />
+                <a 
+                  href="https://github.com/saquibsayyedcoder" 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="flex items-center gap-4 p-3 rounded-xl glass-effect-light hover:bg-white/10 transition-all duration-300 group"
+                >
+                  <div className="p-2 bg-gray-500/20 rounded-lg text-gray-400 group-hover:scale-110 transition-transform">
+                    <FaGithub />
+                  </div>
+                  <div>
+                    <div className="font-medium">GitHub</div>
+                    <div className="text-sm text-gray-400 flex items-center gap-1">
+                      View my code <FaExternalLinkAlt className="text-xs" />
+                    </div>
+                  </div>
                 </a>
               </div>
+            </div>
 
-              <p className="text-sm text-base-content/80 mt-3 flex-1">{p.desc}</p>
-
-              <div className="mt-4 flex flex-wrap gap-2">
-                {p.tech.map((t) => (
-                  <span key={t} className="badge badge-outline">{t}</span>
-                ))}
+            {/* Quick Facts */}
+            <div className="glass-effect rounded-2xl p-6">
+              <h3 className="text-xl font-bold mb-4 flex items-center gap-3">
+                <div className="w-2 h-8 bg-gradient-to-b from-green-500 to-emerald-500 rounded-full"></div>
+                Quick Facts
+              </h3>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-purple-500/20 rounded-lg text-purple-400 mt-1">
+                    <FaBriefcase />
+                  </div>
+                  <div>
+                    <div className="font-semibold">Experience</div>
+                    <div className="text-sm text-gray-400">1+ years (Intern → Associate Engineer → Software Engineer)</div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400 mt-1">
+                    <FaGraduationCap />
+                  </div>
+                  <div>
+                    <div className="font-semibold">Location</div>
+                    <div className="text-sm text-gray-400">Solapur, Maharashtra (Open to remote)</div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-green-500/20 rounded-lg text-green-400 mt-1">
+                    <FaCode />
+                  </div>
+                  <div>
+                    <div className="font-semibold">Availability</div>
+                    <div className="text-sm text-gray-400">Immediate / Notice-based</div>
+                  </div>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Education & Certifications */}
-      <div className="mb-10 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="card bg-base-100 shadow-md p-6">
-          <h3 className="text-lg font-semibold mb-3"><FaGraduationCap className="inline mr-2" />Education</h3>
-          <div className="text-sm text-base-content/80 space-y-3">
-            <div>
-              <div className="font-medium">BCA / MCA</div>
-              <div className="text-xs text-base-content/60">BHARTI VIDYAPEETH PUNE UNIVERSITY · 2018-2024</div>
-            </div>
-            <div>
-              <div className="font-medium">Full Stack Development — Certification</div>
-              <div className="text-xs text-base-content/60">UDEMY · 2023</div>
+            {/* Education & Certifications */}
+            <div className="glass-effect rounded-2xl p-6">
+              <h3 className="text-xl font-bold mb-4 flex items-center gap-3">
+                <div className="w-2 h-8 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full"></div>
+                Education & Certifications
+              </h3>
+              <div className="space-y-4">
+                <div className="p-4 glass-effect-light rounded-xl">
+                  <div className="font-semibold flex items-center gap-2">
+                    <FaGraduationCap className="text-purple-400" />
+                    BCA / MCA
+                  </div>
+                  <div className="text-sm text-gray-400 mt-1">BHARTI VIDYAPEETH PUNE UNIVERSITY · 2018-2024</div>
+                </div>
+                <div className="p-4 glass-effect-light rounded-xl">
+                  <div className="font-semibold">Full Stack Development</div>
+                  <div className="text-sm text-gray-400 mt-1">UDEMY · 2023</div>
+                </div>
+                <div className="p-4 glass-effect-light rounded-xl">
+                  <div className="font-semibold">PostgreSQL & Database Modeling</div>
+                  <div className="text-sm text-gray-400 mt-1">Prisma Workshop · 2023</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="card bg-base-100 shadow-md p-6">
-          <h3 className="text-lg font-semibold mb-3">Certifications & Tools</h3>
-          <ul className="text-sm text-base-content/80 list-disc list-inside space-y-2">
-            <li>PostgreSQL Basics — Certificate</li>
-            <li>Prisma & Database Modeling — Workshop</li>
-          </ul>
-        </div>
+        {/* CTA Footer */}
+        <footer className="bg-gradient-to-r from-purple-600/20 to-indigo-600/20 glass-effect rounded-2xl p-8 text-center">
+          <h4 className="text-2xl font-bold mb-3">Ready to Build Something Amazing?</h4>
+          <p className="text-lg text-gray-300 mb-6 max-w-2xl mx-auto">
+            I'm open to freelance & full-time opportunities. Let's connect and create something extraordinary together.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <a 
+              href="mailto:saquibsayyed12345@gmail.com" 
+              className="px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-2"
+            >
+              <FaEnvelope />
+              Start a Conversation
+            </a>
+            <a 
+              href="/resume" 
+              target="_blank" 
+              rel="noreferrer"
+              className="px-8 py-4 glass-effect-light rounded-xl font-semibold hover:bg-white/10 transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-2"
+            >
+              <FaExternalLinkAlt />
+              View Full Resume
+            </a>
+          </div>
+        </footer>
       </div>
-
-      {/* Footer CTA */}
-      <footer className="card bg-base-100 shadow-md p-6 text-center">
-        <h4 className="text-lg font-semibold">Want to work together?</h4>
-        <p className="text-sm text-base-content/70 mt-2">
-          I’m open to freelance & full-time opportunities. Reach out and let’s build something great.
-        </p>
-        <div className="mt-4 flex items-center justify-center gap-3">
-          <a href="mailto:saquibsayyed12345@gmail.com" className="btn btn-primary btn-sm">
-            Email Me
-          </a>
-          <a href="/resume" className="btn btn-outline btn-sm" target="_blank" rel="noreferrer">
-            View My Resume
-          </a>
-        </div>
-      </footer>
     </section>
   );
 }

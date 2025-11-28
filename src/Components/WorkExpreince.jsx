@@ -1,8 +1,19 @@
-// WorkExperience.jsx
 import React from "react";
-import { FaBuilding, FaCalendarAlt, FaMapMarkerAlt, FaTasks } from "react-icons/fa";
+import { 
+  FaBuilding, 
+  FaCalendarAlt, 
+  FaMapMarkerAlt, 
+  FaTasks, 
+  FaRocket,
+  FaCode,
+  FaDatabase,
+  FaMobile,
+  FaUsers,
+  FaExternalLinkAlt
+} from "react-icons/fa";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useTheme } from "../hooks/useTheme";
 
 const workExperience = [
   {
@@ -21,7 +32,10 @@ const workExperience = [
       "Enhanced UI/UX and cross-platform compatibility, ensuring mobile-first responsiveness.",
       "Collaborated with cross-functional teams using Git, GitHub, Docker, Linux, and Postman.",
     ],
-    accent: "bg-gradient-to-br from-cyan-400 to-indigo-500",
+    gradient: "from-purple-500 to-pink-500",
+    icon: <FaRocket />,
+    achievements: 6,
+    projects: 3
   },
   {
     id: 2,
@@ -30,141 +44,244 @@ const workExperience = [
     startDate: "May 2024",
     endDate: "Aug 2024",
     location: "Pathruth Chowk, Solapur, Maharashtra",
-    tech: ["HTML", "CSS", "JavaScript", "React"],
+    tech: ["HTML", "CSS", "JavaScript", "React", "MongoDB", "PostgreSQL", "Git"],
     description: [
       "Developed and maintained responsive web interfaces using modern frontend technologies.",
       "Managed and optimized PostgreSQL and MongoDB databases.",
       "Integrated APIs to enhance frontend-backend communication.",
       "Used Git for version control and collaborated in teams to improve user experience and performance.",
     ],
-    accent: "bg-gradient-to-br from-orange-300 to-purple-400",
+    gradient: "from-blue-500 to-cyan-500",
+    icon: <FaCode />,
+    achievements: 4,
+    projects: 2
   },
 ];
 
-const Pill = ({ children, icon, className = "" }) => (
+const stats = [
+  { label: "Total Experience", value: "1+ Years", icon: <FaCalendarAlt /> },
+  { label: "Projects Delivered", value: "5+", icon: <FaTasks /> },
+  { label: "Technologies", value: "15+", icon: <FaCode /> },
+  { label: "Team Collaboration", value: "100%", icon: <FaUsers /> },
+];
+
+const TechPill = ({ tech, jobId, index, isDarkMode }) => (
   <span
-    className={`inline-flex items-center gap-2 text-xs md:text-sm px-2 py-1 rounded-full bg-base-200/60 text-base-content/90 ${className}`}
+    key={`${jobId}-${index}`}
+    className={`
+      text-xs px-3 py-1.5 rounded-full font-medium transition-all duration-300 transform hover:scale-105
+      ${isDarkMode 
+        ? 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white' 
+        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900'
+      }
+    `}
   >
-    {icon && <span className="text-base-content/70">{icon}</span>}
-    <span className="truncate">{children}</span>
+    {tech}
   </span>
 );
 
-// ✅ FIXED: Now uses jobId + index to guarantee unique keys
-const TechPills = ({ tech = [], jobId }) => (
-  <div className="flex flex-wrap gap-2 mt-3">
-    {tech.map((t, idx) => (
-      <span
-        key={`${jobId}-${idx}`} // 🔑 Unique per job + position
-        className="text-[11px] hover:bg-gray-300 cursor-pointer md:text-xs px-2 py-1 rounded-full bg-base-200/40 text-base-content/85"
-      >
-        {t}
-      </span>
-    ))}
-  </div>
-);
-
-const Card = ({ job, i }) => {
+const ExperienceCard = ({ job, index, isDarkMode }) => {
   const period = `${job.startDate} — ${job.endDate}`;
   const isOngoing = job.endDate === "Present";
 
   return (
     <motion.article
       layout
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: i * 0.06, duration: 0.45 }}
-      whileHover={{ scale: 1.02 }}
-      className="relative w-full overflow-hidden rounded-2xl shadow-lg"
-      aria-labelledby={`job-${job.id}-title`}
+      transition={{ delay: index * 0.1, duration: 0.6 }}
+      whileHover={{ y: -5 }}
+      className={`
+        relative group overflow-hidden rounded-3xl border-2 transition-all duration-500
+        ${isDarkMode 
+          ? 'bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700/50 hover:border-slate-600/50' 
+          : 'bg-gradient-to-br from-white to-gray-50/50 border-gray-200/50 hover:border-gray-300/50'
+        }
+        hover:shadow-2xl
+      `}
     >
-      {/* Decorative accent stripe */}
-      <div className={`h-2 ${job.accent} rounded-t-2xl`} />
-
-      {/* Content panel */}
-      <div className="p-4 md:p-6 bg-base-100 text-base-content">
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-          {/* Left block: icon + main info */}
-          <div className="flex gap-4 flex-1 min-w-0">
-            <div className="flex flex-col items-center md:items-start">
-              <div className="w-12 h-12 md:w-14 md:h-14 rounded-lg flex items-center justify-center bg-primary/10 text-primary ring-1 ring-primary/20">
-                <FaBuilding className="text-xl md:text-2xl" />
-              </div>
+      {/* Background Glow Effect */}
+      <div className={`absolute inset-0 bg-gradient-to-r ${job.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
+      
+      {/* Main Content */}
+      <div className="relative p-6 md:p-8">
+        {/* Header Section */}
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-6">
+          {/* Company Info */}
+          <div className="flex items-start gap-4 flex-1">
+            {/* Icon */}
+            <div className={`
+              w-16 h-16 rounded-2xl flex items-center justify-center text-white
+              bg-gradient-to-r ${job.gradient} shadow-lg
+            `}>
+              {job.icon}
             </div>
-
+            
+            {/* Text Content */}
             <div className="flex-1 min-w-0">
-              <h3 id={`job-${job.id}-title`} className="text-lg md:text-xl font-semibold leading-tight truncate">
-                {job.companyName}
-              </h3>
-
-              <div className="mt-1 md:mt-2 text-sm md:text-base text-base-content/85 font-medium">
+              <h3 className={`
+                text-xl md:text-2xl font-bold mb-2
+                ${isDarkMode ? 'text-white' : 'text-gray-900'}
+              `}>
                 {job.role}
+              </h3>
+              
+              <div className={`
+                text-lg md:text-xl font-semibold mb-3
+                bg-gradient-to-r ${job.gradient} bg-clip-text text-transparent
+              `}>
+                {job.companyName}
               </div>
 
-              <div className="mt-3 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 text-sm">
-                <Pill icon={<FaCalendarAlt />}>{period}</Pill>
-                <Pill icon={<FaMapMarkerAlt />}>{job.location}</Pill>
+              {/* Meta Info */}
+              <div className="flex flex-wrap gap-3">
+                <div className={`flex items-center gap-2 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  <FaCalendarAlt className="text-purple-500" />
+                  <span>{period}</span>
+                </div>
+                <div className={`flex items-center gap-2 text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  <FaMapMarkerAlt className="text-green-500" />
+                  <span>{job.location}</span>
+                </div>
               </div>
-
-              {/* ✅ Pass jobId to ensure unique keys */}
-              <TechPills tech={job.tech} jobId={job.id} />
             </div>
           </div>
 
-          {/* Right block: status + CTA */}
-          <div className="flex md:flex-col items-center md:items-end gap-3">
-            <div className="text-sm text-base-content/70 text-center md:text-right">
-              <div className="font-medium">Status</div>
-              <div className="text-lg md:text-xl font-extrabold text-base-content mt-1">
-                {isOngoing ? "Ongoing" : job.endDate}
-              </div>
-              <div className="text-xs text-base-content/60 mt-1 hidden md:block">{job.startDate}</div>
+          {/* Status Badge */}
+          <div className="flex lg:flex-col items-center lg:items-end gap-4">
+            <div className={`
+              px-4 py-2 rounded-full text-sm font-semibold
+              ${isOngoing 
+                ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg' 
+                : 'bg-gray-200 text-gray-700'
+              }
+            `}>
+              {isOngoing ? "🚀 Ongoing" : "Completed"}
             </div>
-
+            
             <Link
               to="/contact"
-              className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold bg-primary text-white shadow-md hover:brightness-95 transition"
+              className={`
+                flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 transform hover:scale-105
+                ${isDarkMode
+                  ? 'bg-white/10 text-white hover:bg-white/20' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }
+              `}
             >
-              Contact
+              Contact <FaExternalLinkAlt className="text-xs" />
             </Link>
           </div>
         </div>
 
-        {/* Description */}
-        <div className="mt-4 md:mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="md:col-span-2">
-            <div className="flex items-center gap-2 mb-3 text-base-content">
-              <FaTasks />
-              <span className="font-semibold">What I shipped</span>
+        {/* Tech Stack */}
+        <div className="mb-6">
+          <h4 className={`
+            text-sm font-semibold mb-3 uppercase tracking-wider
+            ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}
+          `}>
+            Technologies Used
+          </h4>
+          <div className="flex flex-wrap gap-2">
+            {job.tech.map((tech, idx) => (
+              <TechPill 
+                key={`${job.id}-${idx}`} 
+                tech={tech} 
+                jobId={job.id} 
+                index={idx}
+                isDarkMode={isDarkMode}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Description & Stats */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Achievements */}
+          <div className="lg:col-span-2">
+            <div className="flex items-center gap-3 mb-4">
+              <div className={`p-2 rounded-lg ${isDarkMode ? 'bg-purple-500/20' : 'bg-purple-100'}`}>
+                <FaTasks className="text-purple-500 text-lg" />
+              </div>
+              <h4 className={`
+                text-lg font-semibold
+                ${isDarkMode ? 'text-white' : 'text-gray-900'}
+              `}>
+                Key Achievements
+              </h4>
             </div>
 
-            <ul className="list-disc pl-5 space-y-2 text-sm md:text-base text-base-content/85">
-              {job.description.map((d, idx) => (
-                <li key={idx} className="leading-relaxed">{d}</li>
+            <ul className="space-y-3">
+              {job.description.map((item, idx) => (
+                <motion.li 
+                  key={idx}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 + idx * 0.1 }}
+                  className={`
+                    flex items-start gap-3 text-sm leading-relaxed
+                    ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}
+                  `}
+                >
+                  <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 bg-gradient-to-r ${job.gradient}`} />
+                  <span>{item}</span>
+                </motion.li>
               ))}
             </ul>
           </div>
 
-          <div className="flex flex-col justify-between">
+          {/* Stats Sidebar */}
+          <div className={`
+            rounded-2xl p-6 space-y-6
+            ${isDarkMode ? 'bg-slate-800/50' : 'bg-gray-100/50'}
+          `}>
+            {/* Quick Stats */}
             <div>
-              <div className="text-base-content/85 font-medium mb-2">Key skills</div>
-              <div className="w-full bg-base-200 rounded-full h-2 overflow-hidden">
-                <div className="h-2 rounded-full bg-primary" style={{ width: "72%" }} />
-              </div>
-              <div className="mt-3 text-xs text-base-content/70">
-                Worked with HTML, CSS Tailwind CSS, JavaScript, React js, Postgre SQL, MongoDB, Express Js, NodeJs, API Integeration. Git & GitHub
+              <h5 className={`
+                text-sm font-semibold mb-4 uppercase tracking-wider
+                ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}
+              `}>
+                Role Impact
+              </h5>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>Achievements</span>
+                    <span className={isDarkMode ? 'text-white' : 'text-gray-900'}>{job.achievements}</span>
+                  </div>
+                  <div className={`w-full h-2 rounded-full overflow-hidden ${isDarkMode ? 'bg-slate-700' : 'bg-gray-300'}`}>
+                    <div 
+                      className={`h-2 rounded-full bg-gradient-to-r ${job.gradient}`}
+                      style={{ width: `${(job.achievements / 6) * 100}%` }}
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>Projects</span>
+                    <span className={isDarkMode ? 'text-white' : 'text-gray-900'}>{job.projects}</span>
+                  </div>
+                  <div className={`w-full h-2 rounded-full overflow-hidden ${isDarkMode ? 'bg-slate-700' : 'bg-gray-300'}`}>
+                    <div 
+                      className={`h-2 rounded-full bg-gradient-to-r ${job.gradient}`}
+                      style={{ width: `${(job.projects / 3) * 100}%` }}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="mt-4 md:mt-0">
-              <Link
-                to="/projects"
-                className="btn btn-ghost w-full md:w-auto"
-                aria-label="View projects"
-              >
-                View Projects
-              </Link>
-            </div>
+            {/* CTA Button */}
+            <Link
+              to="/projects"
+              className={`
+                w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105
+                bg-gradient-to-r ${job.gradient} text-white shadow-lg hover:shadow-xl
+              `}
+            >
+              View Projects <FaExternalLinkAlt className="text-xs" />
+            </Link>
           </div>
         </div>
       </div>
@@ -173,30 +290,147 @@ const Card = ({ job, i }) => {
 };
 
 export default function WorkExperience() {
+  const { isDarkMode } = useTheme();
+
   return (
     <section
       id="experience"
-      className="max-w-6xl mx-auto px-4 sm:px-8 py-12"
+      className={`min-h-screen py-20 transition-colors duration-300 ${
+        isDarkMode 
+          ? 'bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900' 
+          : 'bg-gradient-to-br from-gray-50 via-purple-50 to-gray-50'
+      }`}
       aria-labelledby="experience-heading"
     >
-      <header className="text-center mb-8">
-        <h1
-          id="experience-heading"
-          className="text-3xl md:text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600"
-        >
-          WORK EXPERIENCE
-        </h1>
-        <p className="mt-3 text-sm md:text-base text-base-content/70 max-w-2xl mx-auto">
-          Carefully crafted roles that focus on polish, performance and production-ready code.
-        </p>
-      </header>
+      {/* Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        {isDarkMode ? (
+          <>
+            <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+          </>
+        ) : (
+          <>
+            <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-40 animate-pulse"></div>
+            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-40 animate-pulse animation-delay-2000"></div>
+          </>
+        )}
+      </div>
 
-      <div className="space-y-6">
-        {workExperience.map((job, idx) => (
-          <div key={job.id} className="relative">
-            <Card job={job} i={idx} />
+      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
+        {/* Header */}
+        <motion.header 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-16"
+        >
+          <div className="inline-block mb-4">
+            <span className={`
+              px-4 py-2 rounded-full text-sm font-medium tracking-wider uppercase border transition-colors duration-300
+              ${isDarkMode 
+                ? 'bg-white/10 backdrop-blur-sm text-purple-300 border-white/10' 
+                : 'bg-purple-100 text-purple-700 border-purple-200'
+              }`}
+            >
+              Professional Journey
+            </span>
           </div>
-        ))}
+          <h1 
+            id="experience-heading"
+            className={`text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r mb-4 ${
+              isDarkMode ? 'from-purple-400 to-pink-400' : 'from-purple-600 to-pink-600'
+            }`}
+          >
+            Work Experience
+          </h1>
+          <p className={`text-lg md:text-xl max-w-2xl mx-auto leading-relaxed ${
+            isDarkMode ? 'text-gray-300' : 'text-gray-600'
+          }`}>
+            Crafting digital excellence through carefully engineered solutions and production-ready applications
+          </p>
+        </motion.header>
+
+        {/* Stats Overview */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16"
+        >
+          {stats.map((stat, index) => (
+            <div
+              key={stat.label}
+              className={`
+                rounded-2xl p-6 text-center transition-all duration-500 transform hover:scale-105
+                ${isDarkMode 
+                  ? 'bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10' 
+                  : 'bg-white border border-gray-200 shadow-sm hover:shadow-md'
+                }
+              `}
+            >
+              <div className={`text-2xl mb-2 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`}>
+                {stat.icon}
+              </div>
+              <div className={`text-2xl font-bold mb-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                {stat.value}
+              </div>
+              <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </motion.div>
+
+        {/* Experience Timeline */}
+        <div className="space-y-8">
+          {workExperience.map((job, index) => (
+            <ExperienceCard 
+              key={job.id} 
+              job={job} 
+              index={index}
+              isDarkMode={isDarkMode}
+            />
+          ))}
+        </div>
+
+        {/* CTA Footer */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className={`
+            text-center mt-16 p-8 rounded-3xl border-2
+            ${isDarkMode 
+              ? 'bg-gradient-to-r from-purple-900/20 to-pink-900/20 border-purple-500/20' 
+              : 'bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200'
+            }
+          `}
+        >
+          <h3 className={`text-2xl font-bold mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            Ready to Build Something Amazing?
+          </h3>
+          <p className={`text-lg mb-6 max-w-2xl mx-auto ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            Let's collaborate to bring your ideas to life with cutting-edge technology and exceptional user experiences.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              to="/contact"
+              className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-pink-700 transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2"
+            >
+              Start a Project <FaRocket />
+            </Link>
+            <Link
+              to="/projects"
+              className={`px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-2 ${
+                isDarkMode 
+                  ? 'bg-white/10 text-white hover:bg-white/20' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              View My Work <FaExternalLinkAlt />
+            </Link>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

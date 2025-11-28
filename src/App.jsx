@@ -11,10 +11,14 @@ import Resume from './Components/Resume'; // Keep this for /resume route
 import Contact from './Components/Contact';
 import Footer from './Components/Footer';
 import { Toaster } from 'react-hot-toast';
+import { ThemeProvider } from './context/ThemeContext';
+//import Client from './Components/Client';
 
 function App() {
   return (
-    <Router>
+    <>
+    <ThemeProvider>
+  <Router>
       <Navbar />
 
       {/* ✅ Only render all sections on HOME route */}
@@ -31,6 +35,7 @@ function App() {
               <SkillCard />
               <WorkExperience />
               <Projects />
+              {/* <Client/> */}
               <Contact />
             </>
           }
@@ -43,6 +48,10 @@ function App() {
       <Footer />
       <Toaster />
     </Router>
+    </ThemeProvider>
+    
+    </>
+  
   );
 }
 

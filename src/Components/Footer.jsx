@@ -8,12 +8,14 @@ import {
   FaEnvelope,
   FaPhone,
   FaMapMarkerAlt,
+  FaHeart,
+  FaCode,
 } from "react-icons/fa";
-import { BsTwitter } from "react-icons/bs";
+import { BsArrowRight } from "react-icons/bs";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
-  const [subStatus, setSubStatus] = useState(null); // null | "ok" | "error"
+  const [subStatus, setSubStatus] = useState(null);
   const [subMsg, setSubMsg] = useState("");
 
   function validateEmail(e) {
@@ -27,7 +29,6 @@ export default function Footer() {
       setSubMsg("Please enter a valid email address.");
       return;
     }
-    // fake success (no backend)
     setSubStatus("ok");
     setSubMsg("Thanks — you'll receive updates to your inbox.");
     setEmail("");
@@ -38,175 +39,153 @@ export default function Footer() {
   }
 
   return (
-    <footer className="bg-base-200 text-base-content">
-      <div className="max-w-screen-2xl mx-auto px-6 sm:px-10 lg:px-16 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {/* About / Brand */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center ring-1 ring-primary/20">
-                <span className="font-bold text-primary">S</span>
+    <footer className="bg-gradient-to-br from-gray-900 to-black text-white relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:60px_60px]" />
+      <div className="absolute top-0 left-0 w-72 h-72 bg-primary/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        {/* Main footer content */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mb-12">
+          {/* Brand section */}
+          <div className="lg:col-span-4 space-y-6">
+            <div className="flex items-center gap-4 group">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all duration-300">
+                <FaCode className="text-white text-xl" />
               </div>
               <div>
-                <h3 className="text-lg font-bold">Saquib Sayyed</h3>
-                <div className="text-sm text-base-content/70">Full Stack Developer — MERN & PERN</div>
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                  Saquib Sayyed
+                </h3>
+                <div className="text-sm text-gray-400 font-medium">
+                  Full Stack Developer
+                </div>
               </div>
             </div>
 
-            <p className="text-sm text-base-content/70">
-              I build scalable, user-first web applications using React, Node, Postgres/MongoDB and modern toolchains. Open to freelance & full-time roles.
+            <p className="text-gray-400 leading-relaxed text-lg">
+              Building digital experiences with modern web technologies. 
+              Passionate about clean code, user experience, and continuous learning.
             </p>
 
-            <div className="flex items-center gap-3 mt-2">
-              <a
-                href="https://github.com/saquibsayyedcoder"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="GitHub"
-                className="btn btn-ghost btn-circle"
-              >
-                <FaGithub />
-              </a>
-
-              <a
-                href="https://www.linkedin.com/in/saquib-arif-sayyed-62b88b1a1"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="LinkedIn"
-                className="btn btn-ghost btn-circle"
-              >
-                <FaLinkedin />
-              </a>
-
-              <a
-                href="https://www.instagram.com/ss.saqib_muhammed/?next=%2F"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Instagram"
-                className="btn btn-ghost btn-circle"
-              >
-                <FaInstagram />
-              </a>
-
-              <a
-                href="https://www.youtube.com"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="YouTube"
-                className="btn btn-ghost btn-circle"
-              >
-                <FaYoutube />
-              </a>
-
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="X / Twitter"
-                className="btn btn-ghost btn-circle"
-              >
-                <BsTwitter />
-              </a>
+            {/* Social links */}
+            <div className="flex items-center gap-3">
+              {[
+                { icon: FaGithub, href: "https://github.com/saquibsayyedcoder", label: "GitHub" },
+                { icon: FaLinkedin, href: "https://www.linkedin.com/in/saquib-arif-sayyed-62b88b1a1", label: "LinkedIn" },
+                { icon: FaInstagram, href: "https://www.instagram.com/ss.saqib_muhammed/?next=%2F", label: "Instagram" },
+              ].map(({ icon: Icon, href, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="group p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary/30 transition-all duration-300 hover:scale-110"
+                >
+                  <Icon className="text-xl text-gray-400 group-hover:text-white transition-colors" />
+                </a>
+              ))}
             </div>
           </div>
 
           {/* Quick Links */}
-          <div>
-            <h4 className="font-semibold mb-3">Quick links</h4>
-            <ul className="space-y-2 text-sm text-base-content/80">
-              <li>
-                <a href="/" className="link link-hover">Home</a>
-              </li>
-              <li>
-                <a href="/about" className="link link-hover">About</a>
-              </li>
-              <li>
-                <a href="/projects" className="link link-hover">Projects</a>
-              </li>
-              <li>
-                <a href="/skills" className="link link-hover">Skills</a>
-              </li>
-              <li>
-                <a href="/contact" className="link link-hover">Contact</a>
-              </li>
+          <div className="lg:col-span-2">
+            <h4 className="font-bold text-lg mb-6 text-white">Navigation</h4>
+            <ul className="space-y-4">
+              {["Home", "About", "Projects", "Skills", "Contact"].map((item) => (
+                <li key={item}>
+                  <a
+                    href={`/${item.toLowerCase()}`}
+                    className="group flex items-center text-gray-400 hover:text-white transition-all duration-300 hover:translate-x-1"
+                  >
+                    <BsArrowRight className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    {item}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Contact Info */}
-          <div>
-            <h4 className="font-semibold mb-3">Contact</h4>
-            <ul className="space-y-3 text-sm text-base-content/80">
-              <li className="flex items-start gap-3">
-                <FaEnvelope className="mt-1 text-primary" />
+          <div className="lg:col-span-3">
+            <h4 className="font-bold text-lg mb-6 text-white">Get in Touch</h4>
+            <ul className="space-y-4">
+              <li className="flex items-start gap-4 group">
+                <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                  <FaEnvelope className="text-primary text-lg" />
+                </div>
                 <div>
-                  <div className="font-medium">Email</div>
-                  <a href="mailto:saquibsayyed12345@gmail.com" className="text-sm link link-hover">saquibsayyed12345@gmail.com</a>
+                  <div className="font-medium text-white">Email</div>
+                  <a
+                    href="mailto:saquibsayyed12345@gmail.com"
+                    className="text-gray-400 hover:text-primary transition-colors text-sm"
+                  >
+                    saquibsayyed12345@gmail.com
+                  </a>
                 </div>
               </li>
 
-              <li className="flex items-start gap-3">
-                <FaPhone className="mt-1 text-primary" />
+              <li className="flex items-start gap-4 group">
+                <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                  <FaPhone className="text-primary text-lg" />
+                </div>
                 <div>
-                  <div className="font-medium">Phone</div>
-                  <a href="tel:+917378411134" className="text-sm link link-hover">+91 73784 11134</a>
+                  <div className="font-medium text-white">Phone</div>
+                  <a
+                    href="tel:+917378411134"
+                    className="text-gray-400 hover:text-primary transition-colors text-sm"
+                  >
+                    +91 73784 11134
+                  </a>
                 </div>
               </li>
 
-              <li className="flex items-start gap-3">
-                <FaMapMarkerAlt className="mt-1 text-primary" />
+              <li className="flex items-start gap-4 group">
+                <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                  <FaMapMarkerAlt className="text-primary text-lg" />
+                </div>
                 <div>
-                  <div className="font-medium">Location</div>
-                  <div className="text-sm text-base-content/70">Solapur, Maharashtra, India</div>
+                  <div className="font-medium text-white">Location</div>
+                  <div className="text-gray-400 text-sm">
+                    Solapur, Maharashtra, India
+                  </div>
                 </div>
               </li>
             </ul>
           </div>
 
-          {/* Newsletter */}
-          <div>
-            <h4 className="font-semibold mb-3">Subscribe</h4>
-
-            <p className="text-sm text-base-content/70 mb-4">
-              Get occasional updates about projects, tips, and availability. No spam.
-            </p>
-
-            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
-              <input
-                type="email"
-                aria-label="Email address"
-                placeholder="you@example.com"
-                className="input input-bordered w-full"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              <button type="submit" className="btn btn-primary whitespace-nowrap">
-                Subscribe
-              </button>
-            </form>
-
-            {subStatus === "ok" && (
-              <div className="alert alert-success mt-3 p-2 rounded-md text-sm">
-                {subMsg}
-              </div>
-            )}
-            {subStatus === "error" && (
-              <div className="alert alert-error mt-3 p-2 rounded-md text-sm">
-                {subMsg}
-              </div>
-            )}
-          </div>
+    
         </div>
 
-        {/* Divider + bottom row */}
-        <div className="divider my-8" />
-
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-base-content/70">
-          <div>© {new Date().getFullYear()} Saquib Arif Sayyed. All rights reserved.</div>
-          <div className="flex items-center gap-4">
-            <a href="/privacy" className="link link-hover">Privacy</a>
-            <a href="/terms" className="link link-hover">Terms</a>
-            <span className="text-xs text-base-content/50">Made with ❤️</span>
+        {/* Bottom section */}
+        <div className="border-t border-white/10 pt-8">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2 text-gray-400">
+              <span>© {new Date().getFullYear()} Saquib Arif Sayyed.</span>
+              <span className="hidden sm:inline">All rights reserved.</span>
+            </div>
+            
+            <div className="flex items-center gap-6 text-sm">
+              <a
+                href="/privacy"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                Privacy Policy
+              </a>
+              <a
+                href="/terms"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                Terms of Service
+              </a>
+              <div className="flex items-center gap-2 text-gray-500">
+                <span>Made with</span>
+                <FaHeart className="text-red-500 animate-pulse" />
+                <span>by Saquib</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
