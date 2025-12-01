@@ -184,10 +184,13 @@ export default function Contact() {
               Get In Touch
             </span>
           </div>
-          <h1 className={`text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r mb-4 ${
-            isDarkMode ? 'from-purple-400 to-pink-400' : 'from-purple-600 to-pink-600'
-          }`}>
-            Let's Work Together
+          <h1 
+            id="experience-heading"
+            className={`text-4xl md:text-6xl font-sans bg-clip-text text-transparent bg-gradient-to-r mb-4 ${
+              isDarkMode ? 'from-purple-400 to-pink-400' : 'from-purple-600 to-pink-600'
+            }`}
+          >
+           Let's Work Together
           </h1>
           <p className={`text-lg md:text-xl max-w-2xl mx-auto leading-relaxed ${
             isDarkMode ? 'text-gray-300' : 'text-gray-600'

@@ -145,16 +145,19 @@ export default function SkillCard({ isDarkMode = true }) {
   };
 
   return (
-    <section
-      id="skills"
-      ref={sectionRef}
-      className={`min-h-screen py-20 transition-colors duration-300 ${
-        isDarkMode 
-          ? 'bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900' 
-          : 'bg-gradient-to-br from-gray-50 via-purple-50 to-gray-50'
-      }`}
-      aria-label="Skills section"
-    >
+   <section
+  id="skills"
+  ref={sectionRef}
+  className="min-h-screen py-20 relative overflow-hidden"
+  style={{
+    backgroundImage: `url('/download (1).jpeg')`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    backgroundAttachment: 'fixed' // optional: smooth parallax scroll
+  }}
+  aria-label="Skills section"
+>
       <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px); }
@@ -195,7 +198,11 @@ export default function SkillCard({ isDarkMode = true }) {
       `}</style>
 
       {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div className={`absolute inset-0 z-0 ${
+    isDarkMode 
+      ? 'bg-gradient-to-b from-slate-900/90 via-slate-900/70 to-slate-900/95'
+      : 'bg-gradient-to-b from-white/85 via-white/75 to-white/90'
+  }`}>
         {isDarkMode ? (
           <>
             <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
@@ -221,11 +228,14 @@ export default function SkillCard({ isDarkMode = true }) {
               Technical Expertise
             </span>
           </div>
-          <h2 className={`text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r mb-4 ${
-            isDarkMode ? 'from-purple-400 to-pink-400' : 'from-purple-600 to-pink-600'
-          }`}>
-            My Skill Set
-          </h2>
+         <h2
+  className={`text-4xl md:text-6xl font-sans leading-none tracking-tight p-0 m-0 
+  bg-clip-text text-transparent bg-gradient-to-r mb-4
+  ${isDarkMode ? 'from-purple-400 to-pink-400' : 'from-purple-600 to-pink-600'}`}
+>
+  My Skill Set
+</h2>
+
           <p className={`text-lg md:text-xl max-w-2xl mx-auto leading-relaxed ${
             isDarkMode ? 'text-gray-300' : 'text-gray-600'
           }`}>
@@ -234,73 +244,80 @@ export default function SkillCard({ isDarkMode = true }) {
         </div>
 
         {/* Search and Filter Section */}
-        <div className="flex flex-col lg:flex-row gap-4 mb-8">
-          {/* Search Bar */}
-          <div className={`flex-1 relative ${
-            isDarkMode 
-              ? 'bg-white/5 backdrop-blur-sm border-white/10' 
-              : 'bg-white border-gray-200 shadow-sm'
-          } rounded-2xl border p-2`}>
-            <div className="flex items-center gap-3 px-4">
-              <FaSearch className={`text-lg ${
-                isDarkMode ? 'text-gray-400' : 'text-gray-500'
-              }`} />
-              <input
-                type="text"
-                placeholder="Search skills..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className={`flex-1 py-4 bg-transparent outline-none text-lg placeholder-${
-                  isDarkMode ? 'gray-400' : 'gray-500'
-                }`}
-              />
-              {searchTerm && (
-                <button
-                  onClick={() => setSearchTerm('')}
-                  className={`p-2 rounded-lg ${
-                    isDarkMode 
-                      ? 'hover:bg-white/10 text-gray-400' 
-                      : 'hover:bg-gray-100 text-gray-500'
-                  }`}
-                >
-                  ×
-                </button>
-              )}
-            </div>
-          </div>
+     <div className="flex flex-col lg:flex-row gap-4 mb-8">
 
-          {/* Category Filters */}
-          <div className="flex flex-wrap gap-2">
-            {skillCategories.map((category) => {
-              const colors = getTypeColors(category.id);
-              return (
-                <button
-                  key={category.id}
-                  onClick={() => setActiveCategory(category.id)}
-                  className={`px-6 py-4 rounded-xl font-medium transition-all duration-300 flex items-center gap-3 group ${
-                    activeCategory === category.id
-                      ? `bg-gradient-to-r ${colors.gradient} text-white shadow-lg transform -translate-y-1`
-                      : isDarkMode 
-                        ? 'bg-white/10 backdrop-blur-sm text-gray-300 hover:bg-white/20 hover:transform hover:-translate-y-1 border border-white/10'
-                        : 'bg-white text-gray-700 hover:bg-gray-50 hover:transform hover:-translate-y-1 border border-gray-200 shadow-sm'
-                  }`}
-                >
-                  <span className="text-lg group-hover:scale-110 transition-transform">
-                    {category.icon}
-                  </span>
-                  <span>{category.name}</span>
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    activeCategory === category.id 
-                      ? 'bg-white/20' 
-                      : isDarkMode ? 'bg-black/20' : 'bg-gray-100'
-                  }`}>
-                    {category.count}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
+  {/* Search Bar */}
+  <div className={`flex-1 relative ${
+    isDarkMode 
+      ? 'bg-white/5 backdrop-blur-sm border-white/10' 
+      : 'bg-white border-gray-200 shadow-sm'
+  } rounded-xl border p-1.5`}>
+
+    <div className="flex items-center gap-2 px-3 py-1.5">
+      <FaSearch className={`text-base ${
+        isDarkMode ? 'text-gray-400' : 'text-gray-500'
+      }`} />
+
+      <input
+        type="text"
+        placeholder="Search skills..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className={`flex-1 text-white py-1 bg-transparent outline-none text-sm placeholder-${
+          isDarkMode ? 'gray-400' : 'gray-500'
+        }`}
+      />
+
+      {searchTerm && (
+        <button
+          onClick={() => setSearchTerm('')}
+          className={`p-1 rounded-md ${
+            isDarkMode 
+              ? 'hover:bg-white/10 text-gray-400' 
+              : 'hover:bg-gray-100 text-gray-500'
+          }`}
+        >
+          ×
+        </button>
+      )}
+    </div>
+  </div>
+
+  {/* Category Filters */}
+  <div className="flex flex-wrap gap-2">
+    {skillCategories.map((category) => {
+      const colors = getTypeColors(category.id);
+      return (
+        <button
+          key={category.id}
+          onClick={() => setActiveCategory(category.id)}
+          className={`px-3 py-2 rounded-lg font-medium text-sm transition-all duration-300 flex items-center gap-2 group ${
+            activeCategory === category.id
+              ? `bg-gradient-to-r ${colors.gradient} text-white shadow-md`
+              : isDarkMode 
+                ? 'bg-white/10 backdrop-blur-sm text-gray-300 hover:bg-white/20 border border-white/10'
+                : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 shadow-sm'
+          }`}
+        >
+          <span className="text-base group-hover:scale-110 transition-transform">
+            {category.icon}
+          </span>
+
+          <span>{category.name}</span>
+
+          <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
+            activeCategory === category.id 
+              ? 'bg-white/20' 
+              : isDarkMode ? 'bg-black/20' : 'bg-gray-200'
+          }`}>
+            {category.count}
+          </span>
+        </button>
+      );
+    })}
+  </div>
+</div>
+
 
         {/* Skills Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

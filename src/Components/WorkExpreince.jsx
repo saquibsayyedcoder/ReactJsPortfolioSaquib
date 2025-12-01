@@ -337,7 +337,7 @@ export default function WorkExperience() {
           </div>
           <h1 
             id="experience-heading"
-            className={`text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r mb-4 ${
+            className={`text-4xl md:text-6xl font-sans bg-clip-text text-transparent bg-gradient-to-r mb-4 ${
               isDarkMode ? 'from-purple-400 to-pink-400' : 'from-purple-600 to-pink-600'
             }`}
           >
@@ -413,14 +413,14 @@ export default function WorkExperience() {
             Let's collaborate to bring your ideas to life with cutting-edge technology and exceptional user experiences.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              to="/contact"
+            <a
+              href="#contact"
               className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-pink-700 transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2"
             >
               Start a Project <FaRocket />
-            </Link>
-            <Link
-              to="/projects"
+            </a>
+            <a
+              href="#projects"
               className={`px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-2 ${
                 isDarkMode 
                   ? 'bg-white/10 text-white hover:bg-white/20' 
@@ -428,7 +428,7 @@ export default function WorkExperience() {
               }`}
             >
               View My Work <FaExternalLinkAlt />
-            </Link>
+            </a>
           </div>
         </motion.div>
       </div>

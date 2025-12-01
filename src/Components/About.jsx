@@ -138,10 +138,17 @@ export default function About() {
               About Me
             </span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400 mb-4">
-            Crafting Digital Excellence
-          </h1>
-          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+<h1 
+  className="text-4xl md:text-6xl font-sanss relative mb-4 tracking-tight"
+>
+  <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-500">
+    Crafting Digital Excellence
+  </span>
+  {/* Fallback for browsers that don't support bg-clip-text */}
+  <span className="absolute inset-0 text-transparent opacity-0 peer-hover:opacity-100">
+    Crafting Digital Excellence
+  </span>
+</h1>    <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
             Full-stack developer passionate about building production-ready applications with 
             <span className="text-purple-300 font-semibold"> clean architecture</span>, 
             <span className="text-purple-300 font-semibold"> exceptional UX</span>, and 
@@ -168,13 +175,13 @@ export default function About() {
                   </p>
                   
                   <div className="flex flex-wrap gap-4">
-                    <Link 
-                      to="/projects" 
+                    <a href="#projects"
+                    
                       className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl font-medium hover:from-purple-700 hover:to-indigo-700 transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-2"
                     >
                       View My Work
                       <FaExternalLinkAlt className="text-sm" />
-                    </Link>
+                    </a>
                     <Link 
                       to="/resume" 
                       target="_blank" 
