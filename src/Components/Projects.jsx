@@ -487,7 +487,7 @@ export default function ProjectsPage() {
               My Portfolio
             </span>
           </div>
-          <h1 className={`text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r mb-4 ${
+          <h1 className={`text-4xl md:text-6xl font-sans bg-clip-text text-transparent bg-gradient-to-r mb-4 ${
             isDarkMode ? 'from-purple-400 to-pink-400' : 'from-purple-600 to-pink-600'
           }`}>
             Featured Projects
