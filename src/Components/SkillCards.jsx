@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { 
   FaCode, 
   FaDatabase, 
@@ -8,7 +8,9 @@ import {
   FaRocket,
   FaStar,
   FaLayerGroup,
-  FaSearch
+  FaSearch,
+  FaBolt,
+  FaCheckCircle
 } from 'react-icons/fa';
 
 const skills = [
@@ -26,7 +28,7 @@ const skills = [
   { name: 'Node.js', icon: '/node.png', type: 'Backend', proficiency: 85 },
   { name: 'Express.js', icon: '/express.png', type: 'Backend', proficiency: 83 },
   { name: 'MongoDB', icon: '/mongodb.jpg', type: 'Database', proficiency: 80 },
-  { name: 'PostgreSQL/Prisma ORM', icon: '/hathi.png', type: 'Database', proficiency: 75 },
+  { name: 'PostgreSQL', icon: '/hathi.png', type: 'Database', proficiency: 75 },
   { name: 'Java', icon: '/java.png', type: 'Backend', proficiency: 70 },
 ];
 
@@ -38,138 +40,382 @@ const skillCategories = [
   { id: 'Tool', name: 'Tools', icon: <FaTools />, count: skills.filter(s => s.type === 'Tool').length },
 ];
 
-// Color schemes for both dark and light modes
 const typeColors = {
   Frontend: { 
-    gradient: 'from-purple-500 to-pink-500',
-    dark: { bg: 'bg-purple-500/10', border: 'border-purple-500/20', text: 'text-purple-300' },
-    light: { bg: 'bg-purple-100', border: 'border-purple-200', text: 'text-purple-700' }
+    gradient: 'from-purple-500 via-violet-500 to-pink-500',
+    bg: 'bg-gradient-to-br from-purple-500/20 to-pink-500/10',
+    border: 'border-purple-500/30',
+    text: 'text-purple-400',
+    icon: 'text-purple-400',
+    glow: 'shadow-[0_0_20px_rgba(168,85,247,0.3)]'
   },
   Backend: { 
-    gradient: 'from-blue-500 to-cyan-500',
-    dark: { bg: 'bg-blue-500/10', border: 'border-blue-500/20', text: 'text-blue-300' },
-    light: { bg: 'bg-blue-100', border: 'border-blue-200', text: 'text-blue-700' }
+    gradient: 'from-blue-500 via-cyan-500 to-teal-500',
+    bg: 'bg-gradient-to-br from-blue-500/20 to-cyan-500/10',
+    border: 'border-blue-500/30',
+    text: 'text-blue-400',
+    icon: 'text-blue-400',
+    glow: 'shadow-[0_0_20px_rgba(59,130,246,0.3)]'
   },
   Database: { 
-    gradient: 'from-green-500 to-emerald-500',
-    dark: { bg: 'bg-green-500/10', border: 'border-green-500/20', text: 'text-green-300' },
-    light: { bg: 'bg-green-100', border: 'border-green-200', text: 'text-green-700' }
+    gradient: 'from-emerald-500 via-green-500 to-lime-500',
+    bg: 'bg-gradient-to-br from-emerald-500/20 to-green-500/10',
+    border: 'border-emerald-500/30',
+    text: 'text-emerald-400',
+    icon: 'text-emerald-400',
+    glow: 'shadow-[0_0_20px_rgba(16,185,129,0.3)]'
   },
   Tool: { 
-    gradient: 'from-orange-500 to-red-500',
-    dark: { bg: 'bg-orange-500/10', border: 'border-orange-500/20', text: 'text-orange-300' },
-    light: { bg: 'bg-orange-100', border: 'border-orange-200', text: 'text-orange-700' }
+    gradient: 'from-amber-500 via-orange-500 to-red-500',
+    bg: 'bg-gradient-to-br from-amber-500/20 to-orange-500/10',
+    border: 'border-amber-500/30',
+    text: 'text-amber-400',
+    icon: 'text-amber-400',
+    glow: 'shadow-[0_0_20px_rgba(245,158,11,0.3)]'
   },
 };
 
-function getSkillDesc(name) {
-  const map = {
-    HTML: 'Semantic markup and accessible HTML5 structure',
-    CSS: 'Modern CSS, responsive layouts and animations',
-    'Tailwind CSS': 'Utility-first styling, responsive design',
-    JavaScript: 'ES6+, DOM, async/await, and modern patterns',
-    'React.js': 'Component design, hooks, state management',
-    Redux: 'App-level state management and middleware patterns',
-    'TanStack Query': 'Server state management and caching',
-    'shadcn UI': 'Composable UI primitives and design consistency',
-    'Material UI': 'Component library for quick, accessible UIs',
-    'DaisyUI': 'Tailwind plugin for component-ready classes',
-    'Node.js': 'Server-side JS, event-driven architecture',
-    'Express.js': 'REST APIs, middleware, route handling',
-    MongoDB: 'NoSQL modeling, aggregation pipelines',
-    PostgreSQL: 'Relational modeling and SQL optimization',
-    GitHub: 'Version control, PRs, branching workflows',
-    Java: 'OOP, backend fundamentals and JVM ecosystem',
-  };
-  return map[name] ?? 'Experienced with this technology';
-}
+const skillDescriptions = {
+  HTML: 'Semantic markup and accessible HTML5 structure',
+  CSS: 'Modern CSS, responsive layouts and animations',
+  'Tailwind CSS': 'Utility-first styling with responsive design',
+  JavaScript: 'ES6+, modern patterns and async programming',
+  'React.js': 'Component architecture with hooks and state',
+  Redux: 'Global state management and middleware',
+  'TanStack Query': 'Server state and caching management',
+  'shadcn UI': 'Composable UI with design consistency',
+  'Material UI': 'Component library for rapid development',
+  DaisyUI: 'Tailwind plugin with component classes',
+  'Node.js': 'Server-side JavaScript runtime',
+  'Express.js': 'REST APIs and middleware architecture',
+  MongoDB: 'NoSQL database with aggregation pipelines',
+  PostgreSQL: 'Relational database with SQL optimization',
+  GitHub: 'Version control and collaboration workflows',
+  Java: 'Object-oriented backend development',
+};
+
+// High-performance background image URLs (choose one)
+const BACKGROUND_IMAGES = [
+  'https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=3000&q=80', // Space/tech
+  'https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=3000&q=80', // Tech/gradient
+  'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=3000&q=80', // Network/circuits
+  '/tech-bg.jpg', // Use your local optimized image
+];
 
 export default function SkillCard({ isDarkMode = true }) {
   const [isVisible, setIsVisible] = useState(false);
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [bgLoaded, setBgLoaded] = useState(false);
   const sectionRef = useRef(null);
+  const bgImageRef = useRef(null);
 
-  const filteredSkills = skills.filter(skill => {
-    const matchesCategory = activeCategory === 'all' || skill.type === activeCategory;
-    const matchesSearch = skill.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  // Preload background image
+  useEffect(() => {
+    const img = new Image();
+    img.src = BACKGROUND_IMAGES[0];
+    img.onload = () => setBgLoaded(true);
+  }, []);
+
+  const filteredSkills = useMemo(() => {
+    return skills.filter(skill => {
+      const matchesCategory = activeCategory === 'all' || skill.type === activeCategory;
+      const matchesSearch = skill.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          skill.type.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+      return matchesCategory && matchesSearch;
+    });
+  }, [activeCategory, searchTerm]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          observer.disconnect();
         }
       },
       { threshold: 0.1 }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
+    const currentRef = sectionRef.current;
+    if (currentRef) observer.observe(currentRef);
 
     return () => {
-      if (sectionRef.current) observer.unobserve(sectionRef.current);
+      if (currentRef) observer.unobserve(currentRef);
     };
   }, []);
 
-  const getProficiencyStars = (proficiency) => {
-    const stars = [];
+  const getProficiencyStars = useCallback((proficiency) => {
     const filledStars = Math.floor(proficiency / 20);
-    
-    for (let i = 0; i < 5; i++) {
-      stars.push(
-        <FaStar
-          key={i}
-          className={`text-sm ${
-            i < filledStars 
-              ? 'text-yellow-400 fill-current' 
-              : isDarkMode ? 'text-gray-600' : 'text-gray-300'
-          }`}
-        />
-      );
-    }
-    return stars;
-  };
+    return Array.from({ length: 5 }, (_, i) => (
+      <FaStar
+        key={i}
+        className={`text-xs transition-all duration-300 ${
+          i < filledStars 
+            ? 'text-yellow-400 fill-current scale-110' 
+            : 'text-gray-600 fill-gray-600/30'
+        }`}
+      />
+    ));
+  }, []);
 
-  const getTypeColors = (type) => {
-    const colors = typeColors[type] || typeColors.Frontend;
-    return {
-      gradient: colors.gradient,
-      ...colors[isDarkMode ? 'dark' : 'light']
-    };
-  };
+  const getTypeColors = useCallback((type) => {
+    return typeColors[type] || typeColors.Frontend;
+  }, []);
 
   return (
-   <section
-  id="skills"
-  ref={sectionRef}
-  className="min-h-screen py-20 relative overflow-hidden"
-  style={{
-    backgroundImage: `url('/download (1).jpeg')`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    backgroundAttachment: 'fixed' // optional: smooth parallax scroll
-  }}
-  aria-label="Skills section"
->
-      <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-        }
-        
-        @keyframes glow {
-          0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
-          50% { box-shadow: 0 0 30px rgba(139, 92, 246, 0.6); }
-        }
-        
-        @keyframes slideInUp {
+    <section
+      id="skills"
+      ref={sectionRef}
+      className="relative min-h-screen py-16 overflow-hidden"
+      aria-label="Technical Skills"
+    >
+      {/* Beautiful Background Image with Overlay */}
+      <div className="absolute inset-0">
+        <div 
+          ref={bgImageRef}
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000"
+          style={{
+            backgroundImage: `url(${BACKGROUND_IMAGES[0]})`,
+            opacity: bgLoaded ? 1 : 0,
+          }}
+        />
+        {/* Gradient Overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900/95 via-purple-900/90 to-gray-900/95" />
+        {/* Subtle texture overlay */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwMCAxMDAwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMwMDAiLz48ZyBvcGFjaXR5PSIwLjA1Ij48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTQ3MCAxNjBINTMwVjIzMEg0NzBWMzAwSDUzMFYzNzBINDcwVjQ0MEg1MzBWNTMwSDQ3MFY2MjBINTMwVjY5MEg0NzBWNzcwSDUzMFY4NzBINDcwVjk0MEg1MzBWMTAwMEg0NzBWNjYwSDUzMFY1NzBINDcwVjUwMEg1MzBWNDMwSDQ3MFYzNjBINTMwVjMwMEg0NzBWMjMwSDUzMFYxNjBINDcwWiIgZmlsbD0iI2ZmZiIvPjwvZz48L3N2Zz4=')] opacity-10" />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-8 animate-pulse">
+            <FaBolt className="text-yellow-400" />
+            <span className="text-sm font-medium text-white uppercase tracking-wider">
+              Tech Stack Mastery
+            </span>
+            <FaCheckCircle className="text-green-400 ml-2" />
+          </div>
+          
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6">
+            <span className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent">
+              Tech Arsenal
+            </span>
+          </h1>
+          
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed font-light">
+            Cutting-edge technologies I wield to build exceptional digital experiences
+          </p>
+        </div>
+
+        {/* Search and Filters */}
+        <div className="mb-12 space-y-8">
+          {/* Search Bar */}
+          <div className="max-w-xl mx-auto">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl blur-md group-hover:blur-lg transition-all duration-300" />
+              <div className="relative flex items-center">
+                <FaSearch className="absolute left-5 text-gray-400 text-lg z-10" />
+                <input
+                  type="text"
+                  placeholder="Search technologies by name or category..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-14 pr-12 py-4 bg-white/10 backdrop-blur-lg border-2 border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:shadow-[0_0_30px_rgba(168,85,247,0.3)] transition-all duration-300"
+                />
+                {searchTerm && (
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="absolute right-4 text-gray-400 hover:text-white transition-colors text-xl"
+                    aria-label="Clear search"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Category Filters */}
+          <div className="flex flex-wrap justify-center gap-4">
+            {skillCategories.map((category) => {
+              const colors = getTypeColors(category.id);
+              const isActive = activeCategory === category.id;
+              
+              return (
+                <button
+                  key={category.id}
+                  onClick={() => setActiveCategory(category.id)}
+                  className={`group relative px-6 py-3 rounded-xl font-medium transition-all duration-500 flex items-center gap-3 border backdrop-blur-sm overflow-hidden ${
+                    isActive
+                      ? `${colors.glow} scale-105 border-transparent`
+                      : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
+                  }`}
+                >
+                  {isActive && (
+                    <div className={`absolute inset-0 bg-gradient-to-r ${colors.gradient} opacity-20`} />
+                  )}
+                  <span className={`relative text-lg transition-transform duration-300 group-hover:scale-125 ${
+                    isActive ? 'text-white' : colors.icon
+                  }`}>
+                    {category.icon}
+                  </span>
+                  <span className="relative text-white font-semibold">{category.name}</span>
+                  <span className={`relative px-2.5 py-1 rounded-full text-xs font-bold ${
+                    isActive ? 'bg-white/30 text-white' : 'bg-black/40 text-gray-300'
+                  }`}>
+                    {category.count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Skills Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-16">
+          {filteredSkills.map((skill, index) => {
+            const colors = getTypeColors(skill.type);
+            
+            return (
+              <div
+                key={skill.name}
+                className={`group relative backdrop-blur-lg border rounded-2xl p-6 transition-all duration-700 transform ${
+                  isVisible 
+                    ? 'opacity-100 translate-y-0' 
+                    : 'opacity-0 translate-y-8'
+                } hover:-translate-y-3 hover:shadow-2xl bg-gradient-to-br from-white/5 to-transparent hover:from-white/10 border-white/20 hover:border-white/30`}
+                style={{
+                  transitionDelay: `${index * 70}ms`,
+                }}
+              >
+                {/* Skill Icon with Glow */}
+                <div className="relative mb-5">
+                  <div className={`absolute inset-0 ${colors.glow} blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                  <div className={`relative w-16 h-16 rounded-2xl ${colors.bg} ${colors.border} border-2 flex items-center justify-center`}>
+                    {skill.icon ? (
+                      <img
+                        src={skill.icon}
+                        alt={skill.name}
+                        className="w-10 h-10 object-contain transition-all duration-500 group-hover:scale-125 group-hover:rotate-12"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextElementSibling?.classList.remove('hidden');
+                        }}
+                      />
+                    ) : null}
+                    <div className="hidden w-10 h-10 flex items-center justify-center text-white font-bold text-lg">
+                      {skill.name.charAt(0)}
+                    </div>
+                  </div>
+                  
+                  {/* Proficiency Stars */}
+                  <div className="absolute -top-2 -right-2 bg-gray-900/90 backdrop-blur-sm rounded-full p-2.5 border border-white/10 shadow-lg">
+                    <div className="flex gap-1">
+                      {getProficiencyStars(skill.proficiency)}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Skill Content */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-bold text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-300 transition-all duration-300">
+                      {skill.name}
+                    </h3>
+                    <span className={`px-3 py-1.5 rounded-full text-xs font-bold ${colors.bg} ${colors.border} ${colors.text} border`}>
+                      {skill.type}
+                    </span>
+                  </div>
+
+                  <p className="text-sm text-gray-300 leading-relaxed min-h-[3rem]">
+                    {skillDescriptions[skill.name] || 'Expert-level proficiency'}
+                  </p>
+
+                  {/* Progress Bar */}
+                  <div className="space-y-2.5">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-400">Mastery Level</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-white">{skill.proficiency}%</span>
+                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                      </div>
+                    </div>
+                    <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full bg-gradient-to-r ${colors.gradient} transition-all duration-1000 ease-out ${
+                          isVisible ? 'w-full' : 'w-0'
+                        }`}
+                        style={{ width: `${skill.proficiency}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Corner Accents */}
+                <div className={`absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 ${colors.border} rounded-tr-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+                <div className={`absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 ${colors.border} rounded-bl-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Empty State */}
+        {filteredSkills.length === 0 && (
+          <div className="text-center py-24 backdrop-blur-lg bg-white/5 border border-white/10 rounded-3xl mb-16">
+            <div className="text-7xl mb-6 text-gray-500">🔍</div>
+            <h3 className="text-2xl font-bold text-white mb-3">No technologies found</h3>
+            <p className="text-gray-400 max-w-md mx-auto">
+              Try adjusting your search criteria or select a different category
+            </p>
+          </div>
+        )}
+
+        {/* Stats Summary */}
+        <div className="mb-16 grid grid-cols-2 md:grid-cols-4 gap-6">
+          {skillCategories.slice(1).map((category, index) => {
+            const colors = getTypeColors(category.id);
+            return (
+              <div
+                key={category.id}
+                className={`backdrop-blur-lg border rounded-2xl p-6 text-center transition-all duration-700 transform hover:-translate-y-2 ${
+                  isVisible 
+                    ? 'opacity-100 translate-y-0' 
+                    : 'opacity-0 translate-y-8'
+                } bg-gradient-to-br from-white/5 to-transparent border-white/20 hover:border-white/30`}
+                style={{
+                  transitionDelay: `${index * 150}ms`,
+                }}
+              >
+                <div className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl ${colors.bg} ${colors.border} border mb-4`}>
+                  {React.cloneElement(category.icon, { className: `text-xl ${colors.icon}` })}
+                </div>
+                <div className="text-3xl font-bold text-white mb-2">{category.count}</div>
+                <div className="text-gray-400 font-medium">{category.name} Skills</div>
+                <div className="mt-3 text-xs text-gray-500">Expertise Level</div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* CTA Section */}
+        <div className="text-center">
+          <div className="inline-flex items-center gap-4 px-8 py-4 rounded-2xl bg-gradient-to-r from-purple-600/30 to-pink-600/30 backdrop-blur-xl border-2 border-white/20 hover:border-purple-500/50 transition-all duration-500 group hover:scale-105 hover:shadow-[0_0_40px_rgba(168,85,247,0.5)]">
+            <FaRocket className="text-purple-400 text-xl animate-bounce group-hover:animate-spin" />
+            <span className="text-white text-lg font-bold">
+              Let's Build Something Amazing Together
+            </span>
+            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          </div>
+          <p className="text-gray-400 mt-6 text-sm">
+            • Proficient in {skills.length} technologies • Always learning new tools •
+          </p>
+        </div>
+      </div>
+
+      {/* Performance optimized styles */}
+      <style jsx global>{`
+        @keyframes fadeInUp {
           from {
             opacity: 0;
             transform: translateY(30px);
@@ -180,310 +426,47 @@ export default function SkillCard({ isDarkMode = true }) {
           }
         }
         
-        .skill-card:hover .skill-icon {
-          transform: scale(1.1) rotate(5deg);
+        .animate-pulse {
+          animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
         
-        .floating {
-          animation: float 6s ease-in-out infinite;
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; }
         }
         
-        .glowing {
-          animation: glow 3s ease-in-out infinite;
+        .animate-bounce {
+          animation: bounce 1s infinite;
         }
         
-        .animate-slide-in {
-          animation: slideInUp 0.6s ease-out forwards;
+        @keyframes bounce {
+          0%, 100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-5px);
+          }
+        }
+        
+        .animate-spin {
+          animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        
+        /* Optimize image rendering */
+        img {
+          image-rendering: -webkit-optimize-contrast;
+          image-rendering: crisp-edges;
         }
       `}</style>
-
-      {/* Background Elements */}
-      <div className={`absolute inset-0 z-0 ${
-    isDarkMode 
-      ? 'bg-gradient-to-b from-slate-900/90 via-slate-900/70 to-slate-900/95'
-      : 'bg-gradient-to-b from-white/85 via-white/75 to-white/90'
-  }`}>
-        {isDarkMode ? (
-          <>
-            <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
-          </>
-        ) : (
-          <>
-            <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-40 animate-pulse"></div>
-            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-200 rounded-full mix-blend-multiply filter blur-xl opacity-40 animate-pulse animation-delay-2000"></div>
-          </>
-        )}
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <div className="inline-block mb-4 floating">
-            <span className={`px-4 py-2 rounded-full text-sm font-medium tracking-wider uppercase border transition-colors duration-300 ${
-              isDarkMode 
-                ? 'bg-white/10 backdrop-blur-sm text-purple-300 border-white/10' 
-                : 'bg-purple-100 text-purple-700 border-purple-200'
-            }`}>
-              Technical Expertise
-            </span>
-          </div>
-         <h2
-  className={`text-4xl md:text-6xl font-sans leading-none tracking-tight p-0 m-0 
-  bg-clip-text text-transparent bg-gradient-to-r mb-4
-  ${isDarkMode ? 'from-purple-400 to-pink-400' : 'from-purple-600 to-pink-600'}`}
->
-  My Skill Set
-</h2>
-
-          <p className={`text-lg md:text-xl max-w-2xl mx-auto leading-relaxed ${
-            isDarkMode ? 'text-gray-300' : 'text-gray-600'
-          }`}>
-            Technologies and tools I use to build performant web applications and exceptional user experiences
-          </p>
-        </div>
-
-        {/* Search and Filter Section */}
-     <div className="flex flex-col lg:flex-row gap-4 mb-8">
-
-  {/* Search Bar */}
-  <div className={`flex-1 relative ${
-    isDarkMode 
-      ? 'bg-white/5 backdrop-blur-sm border-white/10' 
-      : 'bg-white border-gray-200 shadow-sm'
-  } rounded-xl border p-1.5`}>
-
-    <div className="flex items-center gap-2 px-3 py-1.5">
-      <FaSearch className={`text-base ${
-        isDarkMode ? 'text-gray-400' : 'text-gray-500'
-      }`} />
-
-      <input
-        type="text"
-        placeholder="Search skills..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className={`flex-1 text-white py-1 bg-transparent outline-none text-sm placeholder-${
-          isDarkMode ? 'gray-400' : 'gray-500'
-        }`}
-      />
-
-      {searchTerm && (
-        <button
-          onClick={() => setSearchTerm('')}
-          className={`p-1 rounded-md ${
-            isDarkMode 
-              ? 'hover:bg-white/10 text-gray-400' 
-              : 'hover:bg-gray-100 text-gray-500'
-          }`}
-        >
-          ×
-        </button>
-      )}
-    </div>
-  </div>
-
-  {/* Category Filters */}
-  <div className="flex flex-wrap gap-2">
-    {skillCategories.map((category) => {
-      const colors = getTypeColors(category.id);
-      return (
-        <button
-          key={category.id}
-          onClick={() => setActiveCategory(category.id)}
-          className={`px-3 py-2 rounded-lg font-medium text-sm transition-all duration-300 flex items-center gap-2 group ${
-            activeCategory === category.id
-              ? `bg-gradient-to-r ${colors.gradient} text-white shadow-md`
-              : isDarkMode 
-                ? 'bg-white/10 backdrop-blur-sm text-gray-300 hover:bg-white/20 border border-white/10'
-                : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 shadow-sm'
-          }`}
-        >
-          <span className="text-base group-hover:scale-110 transition-transform">
-            {category.icon}
-          </span>
-
-          <span>{category.name}</span>
-
-          <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
-            activeCategory === category.id 
-              ? 'bg-white/20' 
-              : isDarkMode ? 'bg-black/20' : 'bg-gray-200'
-          }`}>
-            {category.count}
-          </span>
-        </button>
-      );
-    })}
-  </div>
-</div>
-
-
-        {/* Skills Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredSkills.map((skill, index) => {
-            const colors = getTypeColors(skill.type);
-            return (
-              <div
-                key={skill.name}
-                className={`relative group skill-card rounded-2xl border p-6 transition-all duration-500 transform-gpu
-                  ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}
-                  ${
-                    isDarkMode 
-                      ? 'bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 hover:border-white/20' 
-                      : 'bg-white border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300'
-                  }`}
-                style={{ 
-                  animationDelay: isVisible ? `${index * 80}ms` : '0ms',
-                  animation: isVisible ? 'slideInUp 0.6s ease-out forwards' : 'none'
-                }}
-              >
-                {/* Skill Icon */}
-                <div className="relative mb-4">
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${colors.gradient} flex items-center justify-center skill-icon transition-transform duration-300`}>
-                    {skill.icon ? (
-                      <img
-                        src={skill.icon}
-                        alt={skill.name}
-                        className="w-8 h-8 object-contain"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                          const fallback = e.currentTarget.nextElementSibling;
-                          if (fallback) fallback.classList.remove('hidden');
-                        }}
-                      />
-                    ) : null}
-                    <span className="hidden text-white font-bold text-lg">
-                      {skill.name.charAt(0)}
-                    </span>
-                  </div>
-                  
-                  {/* Proficiency Indicator */}
-                  <div className={`absolute -top-2 -right-2 rounded-full p-1 border ${
-                    isDarkMode ? 'bg-slate-900 border-white/10' : 'bg-white border-gray-200 shadow-sm'
-                  }`}>
-                    <div className="flex gap-0.5">
-                      {getProficiencyStars(skill.proficiency)}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Skill Info */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h3 className={`text-lg font-semibold ${
-                      isDarkMode ? 'text-white' : 'text-gray-900'
-                    }`}>
-                      {skill.name}
-                    </h3>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${colors.bg} ${colors.border} ${colors.text}`}>
-                      {skill.type}
-                    </span>
-                  </div>
-
-                  <p className={`text-sm leading-relaxed ${
-                    isDarkMode ? 'text-gray-400' : 'text-gray-600'
-                  }`}>
-                    {getSkillDesc(skill.name)}
-                  </p>
-
-                  {/* Progress Bar */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs">
-                      <span className={isDarkMode ? 'text-gray-500' : 'text-gray-600'}>Proficiency</span>
-                      <span className={isDarkMode ? 'text-gray-400' : 'text-gray-700'}>{skill.proficiency}%</span>
-                    </div>
-                    <div className={`w-full h-2 rounded-full overflow-hidden ${
-                      isDarkMode ? 'bg-white/10' : 'bg-gray-200'
-                    }`}>
-                      <div 
-                        className={`h-2 rounded-full bg-gradient-to-r ${colors.gradient} transition-all duration-1000 ease-out`}
-                        style={{ 
-                          width: isVisible ? `${skill.proficiency}%` : '0%',
-                          transitionDelay: isVisible ? `${index * 100 + 500}ms` : '0ms'
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Hover Effect */}
-                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${colors.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none`} />
-                
-                {/* Corner Accents */}
-                <div className={`absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 ${colors.border} rounded-tl-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-                <div className={`absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 ${colors.border} rounded-tr-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-                <div className={`absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 ${colors.border} rounded-bl-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-                <div className={`absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 ${colors.border} rounded-br-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Empty State */}
-        {filteredSkills.length === 0 && (
-          <div className={`text-center py-16 rounded-2xl ${
-            isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-gray-200'
-          } border`}>
-            <div className={`text-6xl mb-4 ${
-              isDarkMode ? 'text-gray-600' : 'text-gray-400'
-            }`}>
-              🔍
-            </div>
-            <h3 className={`text-xl font-semibold mb-2 ${
-              isDarkMode ? 'text-white' : 'text-gray-900'
-            }`}>
-              No skills found
-            </h3>
-            <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
-              Try adjusting your search or filter criteria
-            </p>
-          </div>
-        )}
-
-        {/* Stats Footer */}
-        <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6">
-          {skillCategories.slice(1).map((category, index) => {
-            const colors = getTypeColors(category.id);
-            return (
-              <div 
-                key={category.id}
-                className={`rounded-2xl border p-6 text-center transition-all duration-500 ${
-                  isDarkMode 
-                    ? 'bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10' 
-                    : 'bg-white border-gray-200 shadow-sm hover:shadow-md'
-                }`}
-                style={{
-                  animationDelay: isVisible ? `${index * 200 + 1000}ms` : '0ms',
-                  animation: isVisible ? 'slideInUp 0.6s ease-out forwards' : 'none'
-                }}
-              >
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${colors.gradient} flex items-center justify-center mx-auto mb-3`}>
-                  {category.icon}
-                </div>
-                <div className={`text-2xl font-bold mb-1 ${
-                  isDarkMode ? 'text-white' : 'text-gray-900'
-                }`}>{category.count}</div>
-                <div className={`text-sm ${
-                  isDarkMode ? 'text-gray-400' : 'text-gray-600'
-                }`}>{category.name} Skills</div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* CTA */}
-        <div className="text-center mt-12">
-          <div className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl border ${
-            isDarkMode 
-              ? 'bg-white/10 backdrop-blur-sm border-white/10 text-gray-300' 
-              : 'bg-gray-50 border-gray-200 text-gray-700'
-          }`}>
-            <FaRocket className={isDarkMode ? "text-purple-400" : "text-purple-600"} />
-            <span>Ready to bring your ideas to life with these technologies</span>
-          </div>
-        </div>
-      </div>
     </section>
   );
 }
