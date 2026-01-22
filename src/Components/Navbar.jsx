@@ -11,28 +11,30 @@ import {
   FiX,
   FiGithub,
   FiLinkedin,
-  FiDownload
+  FiDownload,
+  FiBell,
+  FiPlus,
+  FiSearch
 } from "react-icons/fi";
+import { FaChevronDown, FaRegStar } from "react-icons/fa";
 import { useTheme } from "../hooks/useTheme";
 
 const navItems = [
-  { id: 1, text: "Home", path: "#home", icon: <FiHome /> },
-  { id: 2, text: "About", path: "#about", icon: <FiUser /> },
+  { id: 1, text: "Overview", path: "#home", icon: <FiHome /> },
+  { id: 2, text: "Projects", path: "#projects", icon: <FiBriefcase /> },
   { id: 3, text: "Skills", path: "#skills", icon: <FiCode /> },
-  { id: 4, text: "Projects", path: "#projects", icon: <FiBriefcase /> },
+  { id: 4, text: "About", path: "#about", icon: <FiUser /> },
   { id: 5, text: "Contact", path: "#contact", icon: <FiMail /> },
 ];
 
-const socialLinks = [
-  { icon: <FiGithub />, href: "https://github.com/saquibsayyedcoder", label: "GitHub" },
-  { icon: <FiLinkedin />, href: "https://linkedin.com/in/saquib-arif-sayyed", label: "LinkedIn" },
-];
+const notificationCount = 3;
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState("home");
+  const [activeSection, setActiveSection] = useState("overview");
   const { isDarkMode, toggleTheme } = useTheme();
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Scroll effects
   useEffect(() => {
@@ -71,179 +73,238 @@ function Navbar() {
     }
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // Implement search functionality
+      console.log("Searching for:", searchQuery);
+    }
+  };
+
   return (
     <>
-      {/* Modern Navbar */}
+      {/* GitHub-style Navbar */}
       <nav className={`
-        fixed top-0 left-0 right-0 z-50 transition-all duration-500
-        ${scrolled 
-          ? isDarkMode 
-            ? 'bg-slate-900/95 backdrop-blur-xl shadow-2xl shadow-black/20 border-b border-slate-800' 
-            : 'bg-white/95 backdrop-blur-xl shadow-2xl shadow-gray-200/50 border-b border-gray-100'
-          : isDarkMode
-            ? 'bg-transparent'
-            : 'bg-transparent'
+        fixed top-0 left-0 right-0 z-50 transition-all duration-200
+        ${isDarkMode 
+          ? 'bg-gray-900/95 backdrop-blur-xl border-b border-gray-800' 
+          : 'bg-gray-50/95 backdrop-blur-xl border-b border-gray-200'
         }
+        ${scrolled ? 'shadow-lg' : ''}
       `}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo */}
-            <div className="flex items-center gap-4">
-              <div className={`
-                relative group cursor-pointer
-                ${isDarkMode ? 'hover:bg-slate-800' : 'hover:bg-gray-100'}
-              `}>
-                <div className={`
-                  w-12 h-12 rounded-2xl border-2 transition-all duration-500
-                  ${isDarkMode 
-                    ? 'border-purple-500/50 bg-gradient-to-br from-purple-500/20 to-pink-500/20' 
-                    : 'border-purple-400 bg-gradient-to-br from-purple-100 to-pink-100'
-                  }
-                  group-hover:scale-110 group-hover:rotate-3
-                `}>
-                  <img
-                    src="/img4.jpg"
-                    alt="Saquib"
-                    className="w-full h-full rounded-2xl object-cover"
-                  />
+          <div className="flex items-center justify-between h-16">
+            {/* Left Section - Logo and Navigation */}
+            <div className="flex items-center space-x-4">
+              {/* GitHub Logo */}
+              <div className="flex items-center space-x-3">
+                <FiGithub className={`w-7 h-7 ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`} />
+                <div className="hidden md:block">
+                  <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>/</span>
+                  <span className={`ml-2 font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                    saquibsayyedcoder
+                  </span>
                 </div>
-                <div className={`
-                  absolute -inset-1 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 
-                  opacity-0 group-hover:opacity-20 blur transition-opacity duration-500
-                `} />
               </div>
-              
-              <div className="flex flex-col">
-                <a
-                  href="#home"
-                  onClick={(e) => scrollToSection(e, "#home")}
-                  className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all duration-300"
-                >
-                  SAQUIB
-                </a>
-                <p className={`
-                  text-sm transition-colors duration-300
-                  ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}
-                  ${scrolled ? 'opacity-100' : 'opacity-0'}
-                `}>
-                  Full Stack Developer
-                </p>
-              </div>
-            </div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-1">
-              <div className={`
-                flex items-center space-x-1 px-4 py-2 rounded-2xl transition-all duration-500
-                ${isDarkMode 
-                  ? 'bg-slate-800/50 border border-slate-700/50' 
-                  : 'bg-gray-100/80 border border-gray-200/50'
-                }
-              `}>
+              {/* Desktop Navigation */}
+              <div className="hidden lg:flex items-center space-x-1">
                 {navItems.map((item) => (
                   <a
                     key={item.id}
                     href={item.path}
                     onClick={(e) => scrollToSection(e, item.path)}
                     className={`
-                      relative px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300
+                      px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200
                       ${activeSection === item.path.replace('#', '')
                         ? isDarkMode
-                          ? 'text-white bg-gradient-to-r from-purple-500/20 to-pink-500/20'
-                          : 'text-gray-900 bg-gradient-to-r from-purple-100 to-pink-100'
+                          ? 'text-white bg-gray-800'
+                          : 'text-gray-900 bg-gray-200'
                         : isDarkMode
-                          ? 'text-gray-400 hover:text-white hover:bg-slate-700/50'
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/50'
+                          ? 'text-gray-400 hover:text-white hover:bg-gray-800'
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
                       }
                     `}
                   >
                     {item.text}
-                    {activeSection === item.path.replace('#', '') && (
-                      <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full" />
-                    )}
                   </a>
                 ))}
               </div>
             </div>
 
-            {/* Right Section */}
-            <div className="flex items-center gap-3">
-              {/* Social Links */}
-              <div className="hidden md:flex items-center gap-2">
-                {socialLinks.map((social, index) => (
-                  <a
-                    key={index}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
+            {/* Center Section - Search Bar */}
+            <div className="hidden md:block flex-1 max-w-xl mx-4">
+              <form onSubmit={handleSearch} className="relative">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search repositories..."
                     className={`
-                      p-2 rounded-xl transition-all duration-300 transform hover:scale-110
+                      w-full pl-10 pr-4 py-2 text-sm rounded-lg border transition-colors duration-200
                       ${isDarkMode
-                        ? 'text-gray-400 hover:text-white hover:bg-slate-800'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                        ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+                        : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
                       }
                     `}
-                    aria-label={social.label}
-                  >
-                    {social.icon}
-                  </a>
-                ))}
+                  />
+                  <FiSearch className={`
+                    absolute left-3 top-1/2 transform -translate-y-1/2
+                    ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}
+                  `} />
+                </div>
+              </form>
+            </div>
+
+            {/* Right Section - Actions */}
+            <div className="flex items-center space-x-2">
+              {/* Mobile Search Button */}
+              <button className="md:hidden p-2">
+                <FiSearch className={`w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`} />
+              </button>
+
+              {/* Desktop Action Buttons */}
+              <div className="hidden md:flex items-center space-x-1">
+                {/* Notification Bell */}
+                <button className={`
+                  relative p-2 rounded-md transition-colors duration-200
+                  ${isDarkMode
+                    ? 'text-gray-400 hover:text-white hover:bg-gray-800'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+                  }
+                `}>
+                  <FiBell className="w-5 h-5" />
+                  {notificationCount > 0 && (
+                    <span className="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-xs font-medium bg-red-500 text-white rounded-full">
+                      {notificationCount}
+                    </span>
+                  )}
+                </button>
+
+                {/* Add Button with Dropdown */}
+                <div className="relative group">
+                  <button className={`
+                    flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200
+                    ${isDarkMode
+                      ? 'text-gray-400 hover:text-white hover:bg-gray-800'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+                    }
+                  `}>
+                    <FiPlus className="w-4 h-4" />
+                    <FaChevronDown className="w-3 h-3" />
+                  </button>
+                  <div className={`
+                    absolute right-0 top-full mt-2 w-48 py-1 rounded-lg border shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200
+                    ${isDarkMode
+                      ? 'bg-gray-800 border-gray-700'
+                      : 'bg-white border-gray-200'
+                    }
+                  `}>
+                    <a href="#" className={`block px-4 py-2 text-sm hover:underline ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'}`}>
+                      New repository
+                    </a>
+                    <a href="#" className={`block px-4 py-2 text-sm hover:underline ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'}`}>
+                      Import repository
+                    </a>
+                    <a href="#" className={`block px-4 py-2 text-sm hover:underline ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'}`}>
+                      New gist
+                    </a>
+                  </div>
+                </div>
+
+                {/* Star Button */}
+                <button className={`
+                  flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200
+                  ${isDarkMode
+                    ? 'text-gray-400 hover:text-white hover:bg-gray-800'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+                  }
+                `}>
+                  <FaRegStar className="w-4 h-4" />
+                  Star
+                </button>
+
+                {/* Resume Button */}
+                <a
+                  href="/resume.pdf"
+                  download
+                  className={`
+                    flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200
+                    ${isDarkMode
+                      ? 'bg-green-600 hover:bg-green-700 text-white'
+                      : 'bg-green-500 hover:bg-green-600 text-white'
+                    }
+                  `}
+                >
+                  <FiDownload className="w-4 h-4" />
+                  <span className="hidden sm:inline">Resume</span>
+                </a>
               </div>
 
-              {/* Resume Download */}
-           
               {/* Theme Toggle */}
               <button
                 onClick={toggleTheme}
                 aria-label="Toggle theme"
                 className={`
-                  p-3 rounded-xl transition-all duration-500 transform hover:scale-110
+                  p-2 rounded-md transition-colors duration-200
                   ${isDarkMode
-                    ? 'text-yellow-400 hover:bg-slate-800 hover:text-yellow-300'
-                    : 'text-orange-500 hover:bg-gray-100 hover:text-orange-600'
+                    ? 'text-gray-400 hover:text-white hover:bg-gray-800'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
                   }
                 `}
               >
-                {isDarkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
+                {isDarkMode ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
               </button>
+
+              {/* Profile Avatar */}
+              <div className="hidden md:flex items-center">
+                <button className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-800 transition-colors duration-200">
+                  <img
+                    src="/img4.jpg"
+                    alt="Profile"
+                    className="w-8 h-8 rounded-full border-2 border-gray-700"
+                  />
+                </button>
+              </div>
 
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setMenuOpen(true)}
                 className={`
-                  lg:hidden p-3 rounded-xl transition-all duration-300
+                  lg:hidden p-2 rounded-md transition-colors duration-200
                   ${isDarkMode
-                    ? 'text-gray-400 hover:text-white hover:bg-slate-800'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                    ? 'text-gray-400 hover:text-white hover:bg-gray-800'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
                   }
                 `}
                 aria-label="Open menu"
               >
-                <FiMenu size={24} />
+                <FiMenu className="w-6 h-6" />
               </button>
             </div>
           </div>
         </div>
       </nav>
 
-      {/* Modern Mobile Menu */}
+      {/* Mobile Menu - GitHub Style */}
       <div
         className={`
-          lg:hidden fixed inset-0 z-50 transition-all duration-500 ease-out
+          lg:hidden fixed inset-0 z-50 transition-all duration-200 ease-out
           ${menuOpen 
             ? "opacity-100 visible" 
             : "opacity-0 invisible pointer-events-none"
           }
         `}
       >
-        {/* Backdrop with blur */}
+        {/* Backdrop */}
         <div
           className={`
-            absolute inset-0 transition-all duration-500
+            absolute inset-0 transition-all duration-200
             ${menuOpen 
               ? isDarkMode 
-                ? 'bg-black/60 backdrop-blur-xl' 
-                : 'bg-white/60 backdrop-blur-xl'
+                ? 'bg-black/60 backdrop-blur-sm' 
+                : 'bg-black/40 backdrop-blur-sm'
               : ''
             }
           `}
@@ -252,162 +313,174 @@ function Navbar() {
 
         {/* Slide-in Panel */}
         <div className={`
-          relative ml-auto w-80 sm:w-96 h-full flex flex-col transition-transform duration-500
+          relative ml-auto w-80 h-full flex flex-col transition-transform duration-200
           ${isDarkMode 
-            ? 'bg-slate-900 border-l border-slate-800' 
+            ? 'bg-gray-900 border-l border-gray-800' 
             : 'bg-white border-l border-gray-200'
           }
           ${menuOpen ? "translate-x-0" : "translate-x-full"}
         `}>
           {/* Header */}
           <div className={`
-            p-6 border-b transition-colors duration-300
-            ${isDarkMode ? 'border-slate-800' : 'border-gray-200'}
+            p-4 border-b flex items-center justify-between
+            ${isDarkMode ? 'border-gray-800' : 'border-gray-200'}
           `}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className={`
-                  w-10 h-10 rounded-xl border-2
-                  ${isDarkMode 
-                    ? 'border-purple-500/50 bg-gradient-to-br from-purple-500/20 to-pink-500/20' 
-                    : 'border-purple-400 bg-gradient-to-br from-purple-100 to-pink-100'
-                  }
-                `}>
-                  <img
-                    src="/img4.jpg"
-                    alt="Saquib"
-                    className="w-full h-full rounded-xl object-cover"
-                  />
+            <div className="flex items-center gap-3">
+              <img
+                src="/img4.jpg"
+                alt="Profile"
+                className="w-10 h-10 rounded-full border-2 border-gray-700"
+              />
+              <div>
+                <div className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  saquibsayyedcoder
                 </div>
-                <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
-                  SAQUIB
-                </span>
+                <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Full-Stack Developer
+                </div>
               </div>
-              <button
-                onClick={() => setMenuOpen(false)}
-                className={`
-                  p-2 rounded-xl transition-all duration-300
-                  ${isDarkMode
-                    ? 'text-gray-400 hover:text-white hover:bg-slate-800'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                  }
-                `}
-                aria-label="Close menu"
-              >
-                <FiX size={24} />
-              </button>
             </div>
+            <button
+              onClick={() => setMenuOpen(false)}
+              className={`
+                p-2 rounded-md transition-colors duration-200
+                ${isDarkMode
+                  ? 'text-gray-400 hover:text-white hover:bg-gray-800'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+                }
+              `}
+              aria-label="Close menu"
+            >
+              <FiX className="w-5 h-5" />
+            </button>
           </div>
 
-          {/* Navigation Items */}
-          <nav className="flex-1 p-6 overflow-y-auto">
-            <ul className="space-y-2">
-              {navItems.map((item) => (
-                <li key={item.id}>
-                  <a
-                    href={item.path}
-                    onClick={(e) => scrollToSection(e, item.path)}
+          {/* Mobile Navigation */}
+          <div className="flex-1 overflow-y-auto">
+            {/* Search Bar */}
+            <div className="p-4 border-b">
+              <form onSubmit={handleSearch}>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search repositories..."
                     className={`
-                      flex items-center gap-4 p-4 rounded-xl font-medium transition-all duration-300 group
-                      ${activeSection === item.path.replace('#', '')
-                        ? isDarkMode
-                          ? 'text-white bg-gradient-to-r from-purple-500/20 to-pink-500/20'
-                          : 'text-gray-900 bg-gradient-to-r from-purple-100 to-pink-100'
-                        : isDarkMode
-                          ? 'text-gray-400 hover:text-white hover:bg-slate-800'
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                      w-full pl-9 pr-3 py-2 text-sm rounded-md border
+                      ${isDarkMode
+                        ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500'
+                        : 'bg-gray-100 border-gray-300 text-gray-900 placeholder-gray-500'
                       }
                     `}
-                  >
-                    <span className={`
-                      text-xl transition-transform duration-300
-                      ${activeSection === item.path.replace('#', '')
-                        ? 'scale-110'
-                        : 'group-hover:scale-110'
-                      }
-                    `}>
-                      {item.icon}
-                    </span>
-                    <span className={`
-                      transition-transform duration-300
-                      ${activeSection === item.path.replace('#', '')
-                        ? 'translate-x-1'
-                        : 'group-hover:translate-x-1'
-                      }
-                    `}>
-                      {item.text}
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+                  />
+                  <FiSearch className={`
+                    absolute left-3 top-1/2 transform -translate-y-1/2
+                    ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}
+                  `} />
+                </div>
+              </form>
+            </div>
 
-          {/* Footer Section */}
-          <div className={`
-            p-6 border-t space-y-4
-            ${isDarkMode ? 'border-slate-800' : 'border-gray-200'}
-          `}>
-            {/* Social Links */}
-            <div className="flex justify-center gap-4">
-              {socialLinks.map((social, index) => (
+            {/* Navigation Items */}
+            <nav className="p-4">
+              <ul className="space-y-1">
+                {navItems.map((item) => (
+                  <li key={item.id}>
+                    <a
+                      href={item.path}
+                      onClick={(e) => scrollToSection(e, item.path)}
+                      className={`
+                        flex items-center gap-3 p-3 rounded-md font-medium transition-colors duration-200
+                        ${activeSection === item.path.replace('#', '')
+                          ? isDarkMode
+                            ? 'text-white bg-gray-800'
+                            : 'text-gray-900 bg-gray-200'
+                          : isDarkMode
+                            ? 'text-gray-400 hover:text-white hover:bg-gray-800'
+                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                        }
+                      `}
+                    >
+                      <span className="text-lg">
+                        {item.icon}
+                      </span>
+                      {item.text}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            {/* Mobile Action Buttons */}
+            <div className="p-4 border-t">
+              <div className="grid grid-cols-2 gap-2 mb-4">
                 <a
-                  key={index}
-                  href={social.href}
+                  href="/resume.pdf"
+                  download
+                  className={`
+                    flex items-center justify-center gap-2 p-3 rounded-md text-sm font-medium transition-colors duration-200
+                    ${isDarkMode
+                      ? 'bg-green-600 hover:bg-green-700 text-white'
+                      : 'bg-green-500 hover:bg-green-600 text-white'
+                    }
+                  `}
+                >
+                  <FiDownload />
+                  Resume
+                </a>
+                <button className={`
+                  flex items-center justify-center gap-2 p-3 rounded-md text-sm font-medium transition-colors duration-200
+                  ${isDarkMode
+                    ? 'border border-gray-700 text-gray-300 hover:bg-gray-800'
+                    : 'border border-gray-300 text-gray-700 hover:bg-gray-100'
+                  }
+                `}>
+                  <FaRegStar />
+                  Star
+                </button>
+              </div>
+
+              {/* Social Links */}
+              <div className="flex justify-center gap-4 p-4 border-t">
+                <a
+                  href="https://github.com/saquibsayyedcoder"
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`
-                    p-3 rounded-xl transition-all duration-300 transform hover:scale-110
+                    p-2 rounded-md transition-colors duration-200
                     ${isDarkMode
-                      ? 'text-gray-400 hover:text-white hover:bg-slate-800'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                      ? 'text-gray-400 hover:text-white hover:bg-gray-800'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
                     }
                   `}
-                  aria-label={social.label}
+                  aria-label="GitHub"
                 >
-                  {social.icon}
+                  <FiGithub className="w-5 h-5" />
                 </a>
-              ))}
-            </div>
-
-            {/* Action Buttons */}
-            <div className="space-y-3">
-              <a
-                href="/resume.pdf"
-                download
-                className={`
-                  flex items-center justify-center gap-2 w-full py-3 rounded-xl font-medium transition-all duration-300
-                  ${isDarkMode
-                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700'
-                    : 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600'
-                  }
-                  transform hover:-translate-y-0.5
-                `}
-              >
-                <FiDownload className="text-sm" />
-                Download Resume
-              </a>
-              
-              <button
-                onClick={toggleTheme}
-                className={`
-                  flex items-center justify-center gap-2 w-full py-3 rounded-xl font-medium transition-all duration-300
-                  ${isDarkMode
-                    ? 'border border-slate-700 text-gray-300 hover:bg-slate-800 hover:text-white'
-                    : 'border border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                  }
-                `}
-              >
-                {isDarkMode ? <FiSun /> : <FiMoon />}
-                Switch to {isDarkMode ? "Light" : "Dark"}
-              </button>
+                <a
+                  href="https://linkedin.com/in/saquib-arif-sayyed"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`
+                    p-2 rounded-md transition-colors duration-200
+                    ${isDarkMode
+                      ? 'text-gray-400 hover:text-white hover:bg-gray-800'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+                    }
+                  `}
+                  aria-label="LinkedIn"
+                >
+                  <FiLinkedin className="w-5 h-5" />
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Spacer */}
-      <div className="h-20" />
+      <div className="h-16" />
     </>
   );
 }
