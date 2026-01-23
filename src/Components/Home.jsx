@@ -115,14 +115,6 @@ export default function Home() {
       name="home" 
       className="min-h-screen bg-gray-900 text-gray-100"
     >
-      {/* GitHub-style header */}
-      <div className="border-b border-gray-700 bg-gray-800/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            {/* Header content if needed */}
-          </div>
-        </div>
-      </div>
 
       {/* Main content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -385,18 +377,6 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="border-t border-gray-800 mt-12 py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-gray-500 text-sm">
-            © {new Date().getFullYear()} Saquib Arif Sayyed. Built with React & Tailwind CSS.
-          </p>
-          <p className="text-gray-600 text-xs mt-2">
-            Inspired by GitHub's UI • Last updated: {new Date().toLocaleDateString()}
-          </p>
         </div>
       </div>
     </section>
