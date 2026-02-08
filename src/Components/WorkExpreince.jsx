@@ -139,31 +139,55 @@ const ExperienceCard = ({ job }) => {
       </div>
 
       {/* Stats Footer */}
-      <div className="px-6 py-4 bg-gray-900/50 border-t border-gray-700 rounded-b-lg">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <FaCodeBranch className="text-gray-400" />
-              <span className="text-sm text-gray-300">{job.projects} projects</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <FaUsers className="text-gray-400" />
-              <span className="text-sm text-gray-300">{job.contributions} contributions</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <FaStar className="text-gray-400" />
-              <span className="text-sm text-gray-300">{job.techStars} stars</span>
-            </div>
-          </div>
-          <Link
-            to="/projects"
-            className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-md transition-colors"
-          >
-            <FaEye />
-            View Projects
-          </Link>
-        </div>
+      <div className="px-4 sm:px-6 py-4 bg-gray-900/50 border-t border-gray-700 rounded-b-lg">
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    
+    {/* Stats Section */}
+    <div className="flex flex-wrap gap-4 sm:gap-6">
+      
+      <div className="flex items-center gap-2">
+        <FaCodeBranch className="text-gray-400 text-sm" />
+        <span className="text-xs sm:text-sm text-gray-300">
+          {job.projects} projects
+        </span>
       </div>
+
+      <div className="flex items-center gap-2">
+        <FaUsers className="text-gray-400 text-sm" />
+        <span className="text-xs sm:text-sm text-gray-300">
+          {job.contributions} contributions
+        </span>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <FaStar className="text-gray-400 text-sm" />
+        <span className="text-xs sm:text-sm text-gray-300">
+          {job.techStars} stars
+        </span>
+      </div>
+
+    </div>
+
+    {/* Button */}
+    <Link
+      to="/projects"
+      className="
+        flex items-center justify-center gap-2
+        w-full sm:w-auto
+        px-4 py-2
+        bg-gray-700 hover:bg-gray-600
+        text-white text-xs sm:text-sm
+        rounded-md
+        transition-colors
+      "
+    >
+      <FaEye className="text-sm" />
+      View Projects
+    </Link>
+
+  </div>
+</div>
+
     </div>
   );
 };
@@ -301,22 +325,42 @@ export default function WorkExperience() {
             <p className="text-gray-400">
               Let's build something amazing together. I'm always open to discussing new opportunities.
             </p>
-            <div className="flex gap-3">
-              <Link
-                to="/contact"
-                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors flex items-center gap-2"
-              >
-                <FaExternalLinkAlt />
-                Contact Me
-              </Link>
-              <Link
-                to="/projects"
-                className="px-6 py-2.5 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-md transition-colors flex items-center gap-2"
-              >
-                <FaEye />
-                View Projects
-              </Link>
-            </div>
+           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+  
+  <Link
+    to="/contact"
+    className="
+      w-full sm:w-auto
+      px-6 py-2.5
+      bg-blue-600 hover:bg-blue-700
+      text-white text-sm sm:text-base font-medium
+      rounded-md
+      transition-colors
+      flex items-center justify-center gap-2
+    "
+  >
+    <FaExternalLinkAlt className="text-sm" />
+    Contact Me
+  </Link>
+
+  <Link
+    to="/projects"
+    className="
+      w-full sm:w-auto
+      px-6 py-2.5
+      bg-gray-700 hover:bg-gray-600
+      text-white text-sm sm:text-base font-medium
+      rounded-md
+      transition-colors
+      flex items-center justify-center gap-2
+    "
+  >
+    <FaEye className="text-sm" />
+    View Projects
+  </Link>
+
+</div>
+
           </div>
         </div>
       </div>
