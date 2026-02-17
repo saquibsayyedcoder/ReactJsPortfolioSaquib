@@ -17,7 +17,7 @@ import { DiMongodb } from "react-icons/di";
 import { SiExpress, SiTypescript, SiDocker, SiPostgresql, SiLinux } from "react-icons/si";
 import { FaNodeJs } from "react-icons/fa";
 import { RiReactjsFill, RiNextjsFill } from "react-icons/ri";
-import saqibimg from "/img4.jpg";
+import saqibimg from "/saquibNew.jpeg";
 import { Link } from "react-router-dom";
 
 // Static data

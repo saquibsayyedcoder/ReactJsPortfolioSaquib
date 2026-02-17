@@ -262,7 +262,7 @@ function Navbar() {
               <div className="hidden md:flex items-center">
                 <button className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-800 transition-colors duration-200">
                   <img
-                    src="/img4.jpg"
+                    src="/saquibNew.jpeg"
                     alt="Profile"
                     className="w-8 h-8 rounded-full border-2 border-gray-700"
                   />
